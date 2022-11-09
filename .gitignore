@@ -14,3 +14,4 @@ pyspark_config.json
 *.csv
 generate_fake_data.py
 scratchpad.py
+*.egg-info
