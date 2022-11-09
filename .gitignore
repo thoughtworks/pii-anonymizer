@@ -15,3 +15,6 @@ pyspark_config.json
 generate_fake_data.py
 scratchpad.py
 *.egg-info
+
+# Mac
+.DS_Store

@@ -2,12 +2,18 @@ MYPY_OPTIONS = --ignore-missing-imports --disallow-untyped-calls --disallow-unty
 
 .PHONY: install
 install:
-	pip install -r requirements-dev.txt
+	pip install pre-commit
+	pre-commit install
+	poetry install
 
 .PHONY: build
 build:
-	python setup.py bdist_wheel
-	
+	poetry run python setup.py bdist_wheel
+
 .PHONY: test
 test:
-	sh bin/run_tests.sh
+	poetry run sh bin/run_tests.sh
+
+.PHONY: requirements
+requirements:
+	poetry export -f requirements.txt --output requirements.txt --dev
