@@ -55,7 +55,7 @@ class ReportGenerator:
 
     def __calculate_detector_count(self, column_series):
         detector_count_map = {}
-        for analyzer_results in column_series.iteritems():
+        for analyzer_results in column_series.items():
             if not analyzer_results:
                 continue
             detector_types = self.__collate_all_detectors_per_cell(analyzer_results)
@@ -89,6 +89,7 @@ class ReportGenerator:
                 detector_stats_for_each_column,
                 name=column,
                 index=detector_stats_for_each_column.keys(),
+                dtype="object",
             )
             if not column_report.empty:
                 column_reports.append(column_report)
