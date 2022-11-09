@@ -1,0 +1,16 @@
+/.vscode
+/.idea
+__pycache__
+*.pyc
+/.venv
+/venv
+/output
+/dist
+/build/lib
+.pytest_cache
+.coverage
+pyspark_output
+pyspark_config.json
+*.csv
+generate_fake_data.py
+scratchpad.py

@@ -1,0 +1,5 @@
+-r requirements.txt
+
+coverage==5.5
+pytest==6.2.5
+freezegun==1.1.0
