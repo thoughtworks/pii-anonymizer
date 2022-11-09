@@ -2,12 +2,16 @@ from pyspark.sql import SparkSession
 from src_spark.constants import FILE_PATH
 import pyspark.sql.functions as f
 
-class CsvParser:
 
+class CsvParser:
     def __init__(self, spark: SparkSession, config):
         self.__validate_config(config)
         self.input_path = config["file_path"]
-        self.delimiter = config["delimiter"] if "delimiter" in config and config["delimiter"] else ","
+        self.delimiter = (
+            config["delimiter"]
+            if "delimiter" in config and config["delimiter"]
+            else ","
+        )
         self.spark = spark
 
     def __validate_config(self, config):
@@ -16,12 +20,11 @@ class CsvParser:
 
     def parse(self):
         df = self.spark.read.load(
-                            self.input_path,
-                            format="csv",
-                            sep=self.delimiter,
-                            header="true",
-                            inferSchema="true")
-        
-        
+            self.input_path,
+            format="csv",
+            sep=self.delimiter,
+            header="true",
+            inferSchema="true",
+        )
 
         return df

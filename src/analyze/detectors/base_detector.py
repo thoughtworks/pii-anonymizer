@@ -5,7 +5,6 @@ from src.analyze.utils.analyzer_result import AnalyzerResult
 
 
 class BaseDetector(ABC):
-
     def __init__(self):
         self.name = None
         self.pattern = None
@@ -25,7 +24,11 @@ class BaseDetector(ABC):
         results = []
         matches = re.finditer(self.get_pattern(), text)
         for match in matches:
-            matched_string = match.string[match.start(): match.end()]
+            matched_string = match.string[match.start() : match.end()]
             if self.validate(matched_string):
-                results.append(AnalyzerResult(matched_string, self.get_name(), match.start(), match.end()))
+                results.append(
+                    AnalyzerResult(
+                        matched_string, self.get_name(), match.start(), match.end()
+                    )
+                )
         return results

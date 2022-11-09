@@ -4,7 +4,6 @@ from src.analyze.detectors.national_id_detector import NationalIdDetector
 
 
 class TestNationalIdDetector(TestCase):
-
     def setUp(self):
         self.national_id_detector = NationalIdDetector()
 

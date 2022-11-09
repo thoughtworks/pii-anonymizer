@@ -5,7 +5,6 @@ from src.analyze.detectors.email_detector import EmailDetector
 
 
 class TestEmailDetector(TestCase):
-
     def setUp(self):
         self.email_detector = EmailDetector()
 

@@ -1,5 +1,4 @@
 class RegEx:
-
     def __init__(self):
         self.regex_string = ""
 
@@ -22,7 +21,9 @@ class RegEx:
         return self
 
     def range(self, from_char, to_char):
-        if not self.__is_single_character_value(from_char) or not self.__is_single_character_value(to_char):
+        if not self.__is_single_character_value(
+            from_char
+        ) or not self.__is_single_character_value(to_char):
             raise ValueError("Range boundaries should be single character")
 
         self.__validate_range(from_char, to_char)

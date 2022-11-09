@@ -5,19 +5,20 @@ from src.analyze.utils.analyzer_result import AnalyzerResult
 
 
 class TestPhoneNumberDetector(TestCase):
-
     def setUp(self):
         self.phone_number_detector = PhoneNumberDetector()
 
     def test_default_property_values_are_correct(self):
         self.assertEqual("PHONE_NUMBER", self.phone_number_detector.name)
-        self.assertEqual('(\\+65?\\s?[689]\\d{7})|'
-                         '(\\+65?\\s?[689]\\d{3} \\d{4})|'
-                         '([689]\\d{7})|'
-                         '([689]\\d{3} \\d{4})|'
-                         '([(]65[)]\\s?[689]\\d{7})|'
-                         '([(]65[)]\\s?[689]\\d{3} \\d{4})',
-                         self.phone_number_detector.pattern)
+        self.assertEqual(
+            "(\\+65?\\s?[689]\\d{7})|"
+            "(\\+65?\\s?[689]\\d{3} \\d{4})|"
+            "([689]\\d{7})|"
+            "([689]\\d{3} \\d{4})|"
+            "([(]65[)]\\s?[689]\\d{7})|"
+            "([(]65[)]\\s?[689]\\d{3} \\d{4})",
+            self.phone_number_detector.pattern,
+        )
 
     def test_invalid_phone_number_does_not_get_detected(self):
         self.assertEqual(len(self.phone_number_detector.execute("S0000001I")), 0)

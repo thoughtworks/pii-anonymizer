@@ -6,23 +6,20 @@ import pandas as pd
 
 class TestCsvWriter(TestCase):
 
-    #TODO: check acquire file path exists
+    # TODO: check acquire file path exists
     def test_invalid_config_gets_caught_during_initialization(self):
         context = {}
         with self.assertRaises(ValueError) as ve:
             CsvWriter(config=context)
-        self.assertEqual(str(ve.exception), "Config 'output_file_path' needs to be provided for parsing")
-
+        self.assertEqual(
+            str(ve.exception),
+            "Config 'output_file_path' needs to be provided for parsing",
+        )
 
     def test_correct_output_path_is_generated(self):
         context = {
-            "acquire": {
-                "file_path": "/anonymizer/test_data.csv",
-                "delimiter": ","
-            },
-            "anonymize": {
-                "output_file_path" : "/anonymizer/output"
-            }
+            "acquire": {"file_path": "/anonymizer/test_data.csv", "delimiter": ","},
+            "anonymize": {"output_file_path": "/anonymizer/output"},
         }
         input_file_name = "test_data"
         output_directory = "/anonymizer/output"

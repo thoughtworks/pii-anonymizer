@@ -3,10 +3,16 @@ from src_spark.analyze.utils.regex import RegEx
 
 
 class NationalIdDetector(BaseDetector):
-
     def __init__(self):
         self.name = "NRIC"
-        self.pattern = RegEx().one_of("STFG").any_digit().num_occurrences(7).range("A", "Z").build()
+        self.pattern = (
+            RegEx()
+            .one_of("STFG")
+            .any_digit()
+            .num_occurrences(7)
+            .range("A", "Z")
+            .build()
+        )
 
     def get_name(self):
         return self.name
