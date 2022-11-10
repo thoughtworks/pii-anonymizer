@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "pii-anonymizer"
-version = "0.1.0"
+name = "pii_anonymizer"
+version = "0.2.0"
 description = "Data Protection Framework is a python library/command line application for identification, anonymization and de-anonymization of Personally Identifiable Information data."
-authors = ["Your Name <you@example.com>"]
+authors = ["Thoughtworks <thoughtworks@thoughtworks.com>"]
 license = "MIT"
 readme = "README.md"
 
@@ -11,10 +11,23 @@ python = "^3.10"
 pyspark = "~3.3.0"
 pandas = "^1.5.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
+bumpver = "^2022.1119"
 coverage = "^6.5.0"
 freezegun = "^1.2.2"
+Faker = "^15.3.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.bumpver]
+current_version = "0.2.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message  = "Bump version {old_version} -> {new_version}"
+commit          = true
+tag             = true
+push            = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
