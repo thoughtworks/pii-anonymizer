@@ -8,7 +8,7 @@ install:
 
 .PHONY: run
 run:
-	poetry run python src/pii_anonymizer/standalone/dpf_main.py --config config.json
+	poetry run python pii_anonymizer/standalone/dpf_main.py --config config.json
 
 .PHONY: build
 build:
