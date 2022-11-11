@@ -5,6 +5,11 @@ The framework aims to work on a two-fold principle for detecting PII:
 1. Using RegularExpressions using a pattern
 2. Using NLP for detecting NER (Named Entity Recognitions)
 
+## Common Usage
+1. `pip install pii-anonymizer`
+2. Specify configs in `pii-anonymizer.json`
+3. Choose whether to run in standalone or spark mode with `python -m pii_anonymizer.standalone` or `python -m pii_anonymizer.spark`
+
 ## Features and Current Status
 
 ### Completed
@@ -35,15 +40,11 @@ Following features  are part of the backlog with more features coming soon
 You can have a detailed at upcoming features and backlog in this [Github Board](https://github.com/thoughtworks-datakind/anonymizer/projects/1?fullscreen=true)
 
 ## Development setup
-
-Clone the [repo](https://github.com/thoughtworks-datakind/anonymizer) and follow the below instructions:  <br/>
-_Assuming that $pwd is where you cloned the repo_
-2. Setup venv : `./bin/setup_venv_locally.sh`
-3. Activate venv : `source ./.venv/bin/activate`
-4. Install dependencies : `pip install -r requirements-dev.txt`
+1. Install [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
+2. Setup hooks and install packages with `make install`
 
 ### Config JSON
-An example for the config JSON is located at `<PROJECT_ROOT>/config.json`
+An example for the config JSON is located at `<PROJECT_ROOT>/pii-anonymizer.json`
 ```
 {
   "acquire": {
@@ -64,8 +65,7 @@ An example for the config JSON is located at `<PROJECT_ROOT>/config.json`
 ```
 
 ### Running Tests
-Update this file first `<PROJECT_ROOT>/src/tests/config/test_config.json` \
-You can run the tests by triggering shell script located at `<PROJECT_ROOT>/bin/run_tests.sh`
+You can run the tests by running `make test` or triggering shell script located at `<PROJECT_ROOT>/bin/run_tests.sh`
 
 ### Trying out on local
 
@@ -75,21 +75,15 @@ In the 'acquire' section of the json, populate the input file path and the delim
 In the 'report' section, provide the output path, where you want the PII detection report to be generated.
 A 'high' level report just calls out which columns have PII attributes.
 A 'medium' level report calls out the percentage of PII in each column and the associated PII (email, credit card, etc)type for the same.
-2. Run the main class - `python src/dpf_main.py --config <absolute path of the config file>`
+2. Run the main class - `python -m pii_anonymizer.standalone --config <optionally, path of the config file or leave blank to defaults to pii-anonymizer.json>`
 You should see the report being appended to the file named 'report_\<date\>.log' in the output path specified in the
 config file.
 
 ### Packaging
-Run `python setup.py bdist_wheel` and the `.whl` file will be created in the `dist` folder.
-
-### Spark-submit
-To run spark-submit locally, you can run the following command
-`spark-submit --py-files dist/SomePackage-*.whl src_spark/main.py --config config.json`
-
+Run `poetry build` and the `.whl` file will be created in the `dist` folder.
 
 ### Licensing
 Distributed under the MIT license. See ``LICENSE`` for more information.
-
 
 ### Contributing
 

@@ -8,7 +8,11 @@ install:
 
 .PHONY: run
 run:
-	poetry run python pii_anonymizer/standalone/dpf_main.py --config config.json
+	poetry run python -m pii_anonymizer.standalone
+
+.PHONY: spark-run
+spark-run:
+	poetry run python -m pii_anonymizer.spark
 
 .PHONY: build
 build:
