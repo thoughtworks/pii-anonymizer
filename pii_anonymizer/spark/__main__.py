@@ -3,7 +3,6 @@ import sys
 
 sys.path.append(os.path.abspath("."))
 
-import argparse
 import json
 
 from pyspark.sql import SparkSession
@@ -12,6 +11,7 @@ from pii_anonymizer.spark.acquire.csv_parser import CsvParser
 from pii_anonymizer.spark.analyze.detectors.pii_detector import PIIDetector
 from pii_anonymizer.spark.constants import ACQUIRE, REPORT
 from pii_anonymizer.spark.write.csv_writer import CsvWriter
+from pii_anonymizer.common.get_args import get_args
 
 
 class Main:
@@ -37,15 +37,6 @@ class Main:
         CsvWriter(spark, config=self.config).write_csv(df=redacted_data_frame)
 
 
-def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config-file", help="config file to run the tool")
-    args = parser.parse_args()
-    if not args.config_file:
-        raise ValueError("Config file path should be provided for the tool to run.")
-    return args
-
-
 if __name__ == "__main__":
     args = get_args()
-    Main(args.config_file).run()
+    Main(args).run()

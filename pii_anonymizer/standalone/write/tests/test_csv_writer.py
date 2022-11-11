@@ -1,7 +1,5 @@
 from pii_anonymizer.standalone.write.csv_writer import CsvWriter
 from unittest import TestCase
-import os
-import pandas as pd
 
 
 class TestCsvWriter(TestCase):
@@ -23,6 +21,6 @@ class TestCsvWriter(TestCase):
         }
         input_file_name = "test_data"
         output_directory = "/anonymizer/output"
-        expected = f"{output_directory}/{input_file_name}_anonymized_.csv"
+        expected = f"{output_directory}/{input_file_name}_anonymized.csv"
         writer = CsvWriter(config=context)
         self.assertEqual(writer.get_output_file_path(), expected)

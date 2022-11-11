@@ -24,7 +24,7 @@ class CsvWriter:
     def get_output_file_path(self):
         file_name = self.input_file_name.split("/")[-1]
         file_name_no_extension = file_name.split(".")[0]
-        result = f"{self.output_path}/{file_name_no_extension}_anonymized_.csv"
+        result = f"{self.output_path}/{file_name_no_extension}_anonymized.csv"
         return result
 
     def write_csv(self, df: DataFrame):

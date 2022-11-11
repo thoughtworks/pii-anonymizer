@@ -25,6 +25,6 @@ class TestCsvWriter(TestCase):
         }
         input_file_name = "test_data"
         output_directory = "/anonymizer/output"
-        expected = f"{output_directory}/{input_file_name}_anonymized_.csv"
+        expected = f"{output_directory}/{input_file_name}_anonymized"
         writer = CsvWriter(spark=self.SPARK, config=context)
         self.assertEqual(writer.get_output_file_path(), expected)
