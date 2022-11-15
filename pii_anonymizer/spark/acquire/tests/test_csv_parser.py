@@ -21,7 +21,7 @@ class TestCsvParser(TestCase):
         )
 
     def test_if_valid_csv_file_provided_returns_spark_df(self):
-        file_path = "{}/data/comma_delimited_file.csv".format(self.current_dir)
+        file_path = "test_data/comma_delimited_file.csv".format(self.current_dir)
         config = {"file_path": file_path, "delimiter": ""}
 
         expected = self.SPARK.createDataFrame(
@@ -33,7 +33,7 @@ class TestCsvParser(TestCase):
         self.assertEqual(actual.collect(), expected.collect())
 
     def test_if_valid_csv_file_with_different_delimiter_provided_returns_spark_df(self):
-        file_path = "{}/data/pipe_delimited_file.csv".format(self.current_dir)
+        file_path = "test_data/pipe_delimited_file.csv".format(self.current_dir)
         config = {"file_path": file_path, "delimiter": "|"}
 
         expected = self.SPARK.createDataFrame(
@@ -45,7 +45,7 @@ class TestCsvParser(TestCase):
         self.assertEqual(actual.collect(), expected.collect())
 
     def test_if_empty_csv_file_returns_empty_pandas_df(self):
-        file_path = "{}/data/empty.csv".format(self.current_dir)
+        file_path = "test_data/empty.csv".format(self.current_dir)
         config = {"file_path": file_path}
         expected = self.SPARK.createDataFrame([], StructType([]))
         actual = CsvParser(spark=self.SPARK, config=config).parse()

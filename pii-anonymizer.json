@@ -1,6 +1,6 @@
 {
   "acquire": {
-    "file_path": "./test_data.csv",
+    "file_path": "./test_data/test_data.csv",
     "delimiter": ","
   },
   "analyze": {},
