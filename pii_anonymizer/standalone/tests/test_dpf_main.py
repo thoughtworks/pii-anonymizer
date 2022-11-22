@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 
 import pandas as pd
 
-from pii_anonymizer.standalone.constants import ACQUIRE, REPORT
+from pii_anonymizer.common.constants import ACQUIRE, REPORT
 from pii_anonymizer.standalone.dpf_main import DPFMain
 
 

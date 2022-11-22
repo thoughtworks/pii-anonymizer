@@ -5,6 +5,7 @@
   },
   "analyze": {},
   "anonymize": {
+    "mode": "redact",
     "output_file_path": "/Users/wisuchoi/Documents/anonymizer/output"
   },
   "report": {

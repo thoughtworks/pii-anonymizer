@@ -1,6 +1,6 @@
 import pandas as pd
 
-from pii_anonymizer.standalone.constants import FILE_PATH
+from pii_anonymizer.common.constants import FILE_PATH
 
 
 class CsvParser:

@@ -1,6 +1,8 @@
 import os
 import sys
 
+from pii_anonymizer.common.config_validator import validate
+
 sys.path.append(os.path.abspath("."))
 
 import json
@@ -21,13 +23,14 @@ class Main:
 
     # TODO : validate the config for the stages right here
     def run(self):
+        validate(self.config)
         spark = (
             SparkSession.builder.master("local").appName("PIIDetector").getOrCreate()
         )
         parsed_data_frame = CsvParser(spark, config=self.config[ACQUIRE]).parse()
-        pii_analysis_report, redacted_data_frame = PIIDetector().analyze_data_frame(
-            parsed_data_frame
-        )
+        pii_analysis_report, redacted_data_frame = PIIDetector(
+            self.config
+        ).analyze_data_frame(parsed_data_frame)
 
         report_generator = ReportGenerator(config=self.config[REPORT])
         if report_generator.is_empty_report_dataframe(pii_analysis_report):

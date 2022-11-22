@@ -1,6 +1,7 @@
 ACQUIRE = "acquire"
-FILE_PATH = "file_path"
 ANALYZE = "analyze"
+ANONYMIZE = "anonymize"
+FILE_PATH = "file_path"
 REPORT = "report"
 LOCATION = "location"
 REPORT_LEVEL = "level"

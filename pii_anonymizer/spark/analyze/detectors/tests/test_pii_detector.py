@@ -1,7 +1,7 @@
 from unittest import TestCase
 from pyspark.sql import SparkSession
 from pii_anonymizer.spark.analyze.detectors.pii_detector import PIIDetector
-from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
+from pii_anonymizer.spark.analyze.utils.analyzer_result import AnalyzerResult
 from pyspark.sql.types import (
     StructField,
     StructType,
@@ -19,7 +19,8 @@ class TestPIIDetector(TestCase):
             .appName("Test PIIDetector")
             .getOrCreate()
         )
-        self.pii_detector = PIIDetector()
+        config = {"anonymize": {"mode": "drop", "output_file_path": "./output"}}
+        self.pii_detector = PIIDetector(config)
 
         self.array_structtype = StructType(
             [

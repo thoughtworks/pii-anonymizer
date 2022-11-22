@@ -7,14 +7,16 @@ import pandas as pd
 
 import pii_anonymizer.standalone.analyze.detectors
 from pii_anonymizer.standalone.analyze.detectors.base_detector import BaseDetector
-from pii_anonymizer.standalone.anonymize.drop_anonymizer import DropAnonymizer
+from pii_anonymizer.standalone.anonymize.anonymizer import Anonymizer
 from pii_anonymizer.standalone.anonymize.anonymizer_result import AnonymizerResult
+from pii_anonymizer.common.constants import ANONYMIZE
 
 
 # TODO : refactor this to use the annotations instead of the module path.
 class PIIDetector:
-    def __init__(self):
+    def __init__(self, config):
         self.detectors = self.__get_detector_instances()
+        self.config = config
 
     def __get_detector_modules(self):
         modules = [
@@ -41,11 +43,20 @@ class PIIDetector:
         return detectors
 
     # TODO : Should we make this static?
-    def analyze_and_redact(self, text: str):
+    def analyze_and_anonymize(self, text: str):
         analyzer_results = []
         for detector in self.detectors:
             analyzer_results = analyzer_results + detector.execute(text)
-        redacted_text = DropAnonymizer.redact(text, analyzer_results)
+
+        mode = self.config[ANONYMIZE].get("mode")
+        match mode:
+            case "drop":
+                redacted_text = Anonymizer.drop(text, analyzer_results)
+            case "redact":
+                redacted_text = Anonymizer.redact(text, analyzer_results)
+            case _:
+                redacted_text = Anonymizer.drop(text, analyzer_results)
+
         return AnonymizerResult(redacted_text, analyzer_results)
 
     def __contains_pii(self, results):
@@ -55,7 +66,7 @@ class PIIDetector:
         return False
 
     def analyze_data_frame(self, input_data_frame):
-        result_df = input_data_frame.applymap(self.analyze_and_redact)
+        result_df = input_data_frame.applymap(self.analyze_and_anonymize)
         return result_df.applymap(lambda x: x.analyzer_results), result_df.applymap(
             lambda x: x.redacted_text
         )

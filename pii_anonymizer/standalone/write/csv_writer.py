@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas import DataFrame
 
-from pii_anonymizer.standalone.constants import OUTPUT_FILE_PATH, FILE_PATH
+from pii_anonymizer.common.constants import OUTPUT_FILE_PATH, FILE_PATH
 
 
 class CsvWriter:

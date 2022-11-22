@@ -8,10 +8,15 @@ from pii_anonymizer.standalone.anonymize.anonymizer_result import AnonymizerResu
 
 class TestPIIDetector(TestCase):
     def setUp(self):
-        self.pii_detector = PIIDetector()
+        config = {
+            "anonymize": {
+                "mode": "drop",
+            },
+        }
+        self.pii_detector = PIIDetector(config)
 
-    def test_should_detect_and_redact_nric_in_text(self):
-        actual = self.pii_detector.analyze_and_redact(
+    def test_should_detect_and_drop_nric_in_text(self):
+        actual = self.pii_detector.analyze_and_anonymize(
             "First President of Singapore NRIC was S0000001I"
         )
         expected = AnonymizerResult(
@@ -20,8 +25,8 @@ class TestPIIDetector(TestCase):
         )
         self.assertEqual(actual, expected)
 
-    def test_should_detect_and_redact_email_in_text(self):
-        actual = self.pii_detector.analyze_and_redact(
+    def test_should_detect_and_drop_email_in_text(self):
+        actual = self.pii_detector.analyze_and_anonymize(
             "A typical email id would look something like test@sample.com"
         )
         expected = AnonymizerResult(
@@ -30,8 +35,8 @@ class TestPIIDetector(TestCase):
         )
         self.assertEqual(actual, expected)
 
-    def test_should_detect_and_redact_phone_in_text(self):
-        actual = self.pii_detector.analyze_and_redact(
+    def test_should_detect_and_drop_phone_in_text(self):
+        actual = self.pii_detector.analyze_and_anonymize(
             "Some examples of phone numbers are +65 62345678"
         )
         expected = AnonymizerResult(
@@ -40,16 +45,16 @@ class TestPIIDetector(TestCase):
         )
         self.assertEqual(actual, expected)
 
-    def test_should_detect_and_redact_all_pii_fields_in_text(self):
-        actual = self.pii_detector.analyze_and_redact(
+    def test_should_detect_and_drop_all_pii_fields_in_text(self):
+        actual = self.pii_detector.analyze_and_anonymize(
             """First President of Singapore NRIC was S0000001I.
                                          A typical email id would look something like test@sample.com"""
         )
-        expected_redacted_text = """First President of Singapore NRIC was .
+        expected_droped_text = """First President of Singapore NRIC was .
                                          A typical email id would look something like """
 
         expected = AnonymizerResult(
-            expected_redacted_text,
+            expected_droped_text,
             [
                 AnalyzerResult("test@sample.com", "EMAIL", 135, 150),
                 AnalyzerResult("S0000001I", "NRIC", 38, 47),
@@ -60,7 +65,7 @@ class TestPIIDetector(TestCase):
     def test_analyze_returns_returns_same_text_and_no_results_when_no_PII_fields(self):
         input_text = """First President of Singapore NRIC was ABC.
                                          A typical email id would look something like test"""
-        actual = self.pii_detector.analyze_and_redact(input_text)
+        actual = self.pii_detector.analyze_and_anonymize(input_text)
         expected = AnonymizerResult(input_text, [])
         self.assertEqual(actual, expected)
 

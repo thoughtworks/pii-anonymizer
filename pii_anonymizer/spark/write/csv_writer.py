@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession, DataFrame
-from pii_anonymizer.standalone.constants import OUTPUT_FILE_PATH, FILE_PATH
+from pii_anonymizer.common.constants import OUTPUT_FILE_PATH, FILE_PATH
 
 
 class CsvWriter:
@@ -27,4 +27,6 @@ class CsvWriter:
         return result
 
     def write_csv(self, df: DataFrame):
-        df.write.option("header", "true").csv(self.get_output_file_path())
+        df.write.mode("overwrite").option("header", "true").csv(
+            self.get_output_file_path()
+        )

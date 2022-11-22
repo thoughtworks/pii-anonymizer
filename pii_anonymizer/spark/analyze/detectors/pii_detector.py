@@ -4,13 +4,16 @@ import inspect
 import sys
 from pyspark.sql import DataFrame
 from pyspark.sql.types import StructField, StructType, ArrayType, StringType, LongType
+from pii_anonymizer.common.constants import ANONYMIZE
 from pii_anonymizer.spark.analyze.detectors.base_detector import BaseDetector
 import pii_anonymizer.spark.analyze.detectors
+from pii_anonymizer.spark.anonymize.anonymizer import Anonymizer
 
 
 class PIIDetector:
-    def __init__(self):
+    def __init__(self, config):
         self.detectors = self.__get_detector_instances()
+        self.config = config
 
     def __get_detector_modules(self):
         modules = [
@@ -81,20 +84,23 @@ class PIIDetector:
     def get_redacted_text(self, input_data_frame: DataFrame, report: DataFrame):
         pii_list = report.rdd.flatMap(lambda row: self._get_pii_list(row)).collect()
         column = input_data_frame.columns
-        result = input_data_frame.rdd.map(
-            lambda row: self.__replace_redacted_text(row, pii_list)
-        ).toDF(column)
+
+        mode = self.config[ANONYMIZE].get("mode")
+        match mode:
+            case "drop":
+                result = input_data_frame.rdd.map(
+                    lambda row: Anonymizer.drop(row, pii_list)
+                ).toDF(column)
+            case "redact":
+                result = input_data_frame.rdd.map(
+                    lambda row: Anonymizer.redact(row, pii_list)
+                ).toDF(column)
+            case _:
+                result = input_data_frame.rdd.map(
+                    lambda row: Anonymizer.drop(row, pii_list)
+                ).toDF(column)
 
         return result
-
-    def __replace_redacted_text(self, row, pii_list):
-        new_row = []
-        for cell in row:
-            for word in pii_list:
-                if word in cell:
-                    cell = cell.replace(word, "")
-            new_row.append(cell)
-        return new_row
 
     def analyze_data_frame(self, input_data_frame: DataFrame):
         report = self.get_analyzer_results(input_data_frame)

@@ -4,7 +4,7 @@ from enum import Enum
 import os
 import pandas as pd
 import logging
-from pii_anonymizer.standalone.constants import LOCATION, REPORT_LEVEL
+from pii_anonymizer.common.constants import LOCATION, REPORT_LEVEL
 
 
 class ReportLevel(Enum):
