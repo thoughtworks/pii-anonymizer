@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pii_anonymizer"
-version = "0.1.0"
+version = "0.1.1"
 description = "Data Protection Framework is a python library/command line application for identification, anonymization and de-anonymization of Personally Identifiable Information data."
 authors = ["Thoughtworks <thoughtworks@thoughtworks.com>"]
 license = "MIT"
@@ -23,7 +23,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.bumpver]
-current_version = "0.1.0"
+current_version = "0.1.1"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = true
