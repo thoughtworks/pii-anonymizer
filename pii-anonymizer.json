@@ -9,7 +9,7 @@
     "level": "medium"
   },
   "anonymize": {
-    "mode": "redact",
+    "mode": "hash",
     "output_file_path": "./output"
   }
 }

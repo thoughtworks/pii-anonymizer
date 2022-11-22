@@ -95,6 +95,10 @@ class PIIDetector:
                 result = input_data_frame.rdd.map(
                     lambda row: Anonymizer.redact(row, pii_list)
                 ).toDF(column)
+            case "hash":
+                result = input_data_frame.rdd.map(
+                    lambda row: Anonymizer.hash(row, pii_list)
+                ).toDF(column)
             case _:
                 result = input_data_frame.rdd.map(
                     lambda row: Anonymizer.drop(row, pii_list)

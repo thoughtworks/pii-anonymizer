@@ -1,3 +1,6 @@
+from hashlib import sha256
+
+
 class Anonymizer:
     @staticmethod
     def drop(row, pii_list):
@@ -16,5 +19,15 @@ class Anonymizer:
             for word in pii_list:
                 if word in cell:
                     cell = cell.replace(word, "[Redacted]")
+            new_row.append(cell)
+        return new_row
+
+    @staticmethod
+    def hash(row, pii_list):
+        new_row = []
+        for cell in row:
+            for word in pii_list:
+                if word in cell:
+                    cell = cell.replace(word, sha256(word.encode("utf-8")).hexdigest())
             new_row.append(cell)
         return new_row
