@@ -86,14 +86,12 @@ class PIIDetector:
         column = input_data_frame.columns
 
         mode = self.config[ANONYMIZE].get("mode")
+        value = self.config[ANONYMIZE].get("value", "")
+
         match mode:
-            case "drop":
+            case "replace":
                 result = input_data_frame.rdd.map(
-                    lambda row: Anonymizer.drop(row, pii_list)
-                ).toDF(column)
-            case "redact":
-                result = input_data_frame.rdd.map(
-                    lambda row: Anonymizer.redact(row, pii_list)
+                    lambda row: Anonymizer.replace(row, value, pii_list)
                 ).toDF(column)
             case "hash":
                 result = input_data_frame.rdd.map(
@@ -101,7 +99,7 @@ class PIIDetector:
                 ).toDF(column)
             case _:
                 result = input_data_frame.rdd.map(
-                    lambda row: Anonymizer.drop(row, pii_list)
+                    lambda row: Anonymizer.replace(row, value, pii_list)
                 ).toDF(column)
 
         return result

@@ -1,6 +1,6 @@
 from pii_anonymizer.common.constants import ANONYMIZE
 
-anonymize_mode = ["redact", "drop", "hash"]
+anonymize_mode = ["replace", "hash"]
 anonymize_mode_err_msg = f"{ANONYMIZE}'s mode must be {' or '.join(anonymize_mode)}"
 
 

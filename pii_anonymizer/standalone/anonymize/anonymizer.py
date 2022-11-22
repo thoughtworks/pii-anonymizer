@@ -5,15 +5,9 @@ from hashlib import sha256
 
 class Anonymizer:
     @staticmethod
-    def drop(text: str, analyzer_results: [AnalyzerResult]):
+    def replace(text: str, replace_string: str, analyzer_results: [AnalyzerResult]):
         for result in analyzer_results:
-            text = text.replace(result.text, "")
-        return text
-
-    @staticmethod
-    def redact(text: str, analyzer_results: [AnalyzerResult]):
-        for result in analyzer_results:
-            text = text.replace(result.text, "[Redacted]")
+            text = text.replace(result.text, replace_string)
         return text
 
     @staticmethod

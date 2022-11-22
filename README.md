@@ -22,8 +22,9 @@ The framework aims to work on a two-fold principle for detecting PII:
    * [x] FIN/NRIC : A unique set of nine alpha-numeric characters on the Singapore National Registration Identity Card.
 
  * Following anonymizers have been added
-    * [x] Redaction: Deletes all or part of a detected sensitive value.
-    * [x] Encryption :  Encrypts the original sensitive data value using a cryptographic key. Cloud DLP supports several types of tokenization, including transformations that can be reversed, or "re-identified."
+    * [x] Replacement ('replace'): Replaces a detected sensitive value with a specified surrogate value. Leave the value empty to simply delete detected sensitive value.
+    * [x] Hash ('hash'): Hash detected sensitive value with sha256.
+
 
 ### TO-DO
 Following features  are part of the backlog with more features coming soon
@@ -31,10 +32,10 @@ Following features  are part of the backlog with more features coming soon
     * [ ] NAME
     * [ ] ADDRESS
  * Anonymizers:
+    * [ ] Encryption :  Encrypts the original sensitive data value using a cryptographic key. Cloud DLP supports several types of tokenization, including transformations that can be reversed, or "re-identified."
     * [ ] Masking: Replaces a number of characters of a sensitive value with a specified surrogate character, such as a hash (#) or asterisk (*).
     * [ ] Bucketing: "Generalizes" a sensitive value by replacing it with a range of values. (For example, replacing a specific age with an age range,
     or temperatures with ranges corresponding to "Hot," "Medium," and "Cold.")
-    * [ ] Replacement: Replaces a detected sensitive value with a specified surrogate value.
 
 
 You can have a detailed at upcoming features and backlog in this [Github Board](https://github.com/thoughtworks-datakind/anonymizer/projects/1?fullscreen=true)
@@ -54,12 +55,14 @@ An example for the config JSON is located at `<PROJECT_ROOT>/pii-anonymizer.json
   "analyze": {
 
   },
+  "anonymize": {
+    "mode": <replace|hash>,
+    "value": "string to replace",
+    "output_file_path" : <PATH TO YOUR CSV OUTPUT FOLDER>
+  },
   "report" : {
     "location" : <PATH TO YOUR REPORT OUTPUT FOLDER>,
     "level" : <LOG LEVEL>
-  },
-  "anonymize": {
-    "output_file_path" : <PATH TO YOUR CSV OUTPUT FOLDER>
   }
 }
 ```

@@ -4,12 +4,12 @@
     "delimiter": ","
   },
   "analyze": {},
+  "anonymize": {
+    "mode": "replace",
+    "output_file_path": "./output"
+  },
   "report": {
     "location": "./output",
     "level": "medium"
-  },
-  "anonymize": {
-    "mode": "hash",
-    "output_file_path": "./output"
   }
 }

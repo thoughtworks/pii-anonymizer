@@ -49,15 +49,15 @@ class PIIDetector:
             analyzer_results = analyzer_results + detector.execute(text)
 
         mode = self.config[ANONYMIZE].get("mode")
+        value = self.config[ANONYMIZE].get("value", "")
+
         match mode:
-            case "drop":
-                redacted_text = Anonymizer.drop(text, analyzer_results)
-            case "redact":
-                redacted_text = Anonymizer.redact(text, analyzer_results)
+            case "replace":
+                redacted_text = Anonymizer.replace(text, value, analyzer_results)
             case "hash":
                 redacted_text = Anonymizer.hash(text, analyzer_results)
             case _:
-                redacted_text = Anonymizer.drop(text, analyzer_results)
+                redacted_text = Anonymizer.replace(text, value, analyzer_results)
 
         return AnonymizerResult(redacted_text, analyzer_results)
 
