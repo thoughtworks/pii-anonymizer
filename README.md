@@ -53,7 +53,7 @@ An example for the config JSON is located at `<PROJECT_ROOT>/pii-anonymizer.json
     "delimiter": <YOUR CSV DELIMITER>
   },
   "analyze": {
-
+    "exclude": ['Exception']
   },
   "anonymize": {
     "mode": <replace|hash>,
