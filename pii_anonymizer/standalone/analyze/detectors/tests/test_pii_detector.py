@@ -9,8 +9,9 @@ from pii_anonymizer.standalone.anonymize.anonymizer_result import AnonymizerResu
 class TestPIIDetector(TestCase):
     def setUp(self):
         config = {
+            "analyze": {"exclude": ["Exception"]},
             "anonymize": {
-                "mode": "drop",
+                "mode": "replace",
             },
         }
         self.pii_detector = PIIDetector(config)
@@ -62,7 +63,7 @@ class TestPIIDetector(TestCase):
         )
         self.assertEqual(actual, expected)
 
-    def test_analyze_returns_returns_same_text_and_no_results_when_no_PII_fields(self):
+    def test_analyze_returns_same_text_and_no_results_when_no_PII_fields(self):
         input_text = """First President of Singapore NRIC was ABC.
                                          A typical email id would look something like test"""
         actual = self.pii_detector.analyze_and_anonymize(input_text)
@@ -167,6 +168,50 @@ class TestPIIDetector(TestCase):
                     "A typical email id would look something like ",
                 ],
                 "remarks": ["No sensitive data", "No sensitive data"],
+            }
+        )
+
+        pd.testing.assert_frame_equal(expected_report, actual_report)
+        pd.testing.assert_frame_equal(expected_result, actual_result)
+
+    def test_analyze_data_frame_does_not_touch_exclude_column(self):
+        test_data_frame = pd.DataFrame(
+            {
+                "summary": [
+                    "First President of Singapore NRIC was S0000001I",
+                    "A typical email id would look something like test@sample.com",
+                ],
+                "Exception": [
+                    "First President of Singapore NRIC was S0000001I",
+                    "A typical email id would look something like test@sample.com",
+                ],
+            }
+        )
+
+        actual_report, actual_result = self.pii_detector.analyze_data_frame(
+            test_data_frame
+        )
+
+        expected_report = pd.DataFrame(
+            {
+                "summary": [
+                    [AnalyzerResult("S0000001I", "NRIC", 38, 47)],
+                    [AnalyzerResult("test@sample.com", "EMAIL", 45, 60)],
+                ],
+                "Exception": [[], []],
+            }
+        )
+
+        expected_result = pd.DataFrame(
+            {
+                "summary": [
+                    "First President of Singapore NRIC was ",
+                    "A typical email id would look something like ",
+                ],
+                "Exception": [
+                    "First President of Singapore NRIC was S0000001I",
+                    "A typical email id would look something like test@sample.com",
+                ],
             }
         )
 

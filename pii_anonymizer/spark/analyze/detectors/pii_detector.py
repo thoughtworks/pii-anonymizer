@@ -4,7 +4,8 @@ import inspect
 import sys
 from pyspark.sql import DataFrame
 from pyspark.sql.types import StructField, StructType, ArrayType, StringType, LongType
-from pii_anonymizer.common.constants import ANONYMIZE
+from pyspark.sql.functions import lit, array
+from pii_anonymizer.common.constants import ANALYZE, ANONYMIZE
 from pii_anonymizer.spark.analyze.detectors.base_detector import BaseDetector
 import pii_anonymizer.spark.analyze.detectors
 from pii_anonymizer.spark.anonymize.anonymizer import Anonymizer
@@ -82,30 +83,48 @@ class PIIDetector:
         return new_row
 
     def get_redacted_text(self, input_data_frame: DataFrame, report: DataFrame):
+        excluded_columns = self.config[ANALYZE].get("exclude", [])
         pii_list = report.rdd.flatMap(lambda row: self._get_pii_list(row)).collect()
-        column = input_data_frame.columns
+        columns = input_data_frame.columns
 
         mode = self.config[ANONYMIZE].get("mode")
         value = self.config[ANONYMIZE].get("value", "")
 
-        match mode:
-            case "replace":
-                result = input_data_frame.rdd.map(
-                    lambda row: Anonymizer.replace(row, value, pii_list)
-                ).toDF(column)
-            case "hash":
-                result = input_data_frame.rdd.map(
-                    lambda row: Anonymizer.hash(row, pii_list)
-                ).toDF(column)
-            case _:
-                result = input_data_frame.rdd.map(
-                    lambda row: Anonymizer.replace(row, value, pii_list)
-                ).toDF(column)
+        resultDf = input_data_frame.withColumn(
+            "pii_list", array(*map(lit, pii_list))
+        ).withColumn("replace_string", lit(value))
 
-        return result
+        for column in columns:
+            if column in excluded_columns:
+                continue
+            match mode:
+                case "replace":
+                    resultDf = resultDf.withColumn(
+                        column,
+                        Anonymizer.replace(column, "replace_string", "pii_list"),
+                    )
+                case "hash":
+                    resultDf = resultDf.withColumn(
+                        column,
+                        Anonymizer.hash(column, "pii_list"),
+                    )
+                case _:
+                    resultDf = resultDf.withColumn(
+                        column,
+                        Anonymizer.replace(column, "replace_string", "pii_list"),
+                    )
+
+        resultDf = resultDf.drop("replace_string", "pii_list")
+        return resultDf
 
     def analyze_data_frame(self, input_data_frame: DataFrame):
-        report = self.get_analyzer_results(input_data_frame)
+        excluded_columns = self.config[ANALYZE].get("exclude", [])
+        selected_columns = [
+            col for col in input_data_frame.columns if col not in excluded_columns
+        ]
+        excluded_data_frame = input_data_frame.select(selected_columns)
+        report = self.get_analyzer_results(excluded_data_frame)
+        # report = self.get_analyzer_results(input_data_frame)
         redacted = self.get_redacted_text(input_data_frame, report)
 
         return report, redacted

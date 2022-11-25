@@ -3,9 +3,11 @@
     "file_path": "./test_data/test_data.csv",
     "delimiter": ","
   },
-  "analyze": {},
+  "analyze": {
+    "exclude": ["Exception"]
+  },
   "anonymize": {
-    "mode": "replace",
+    "mode": "hash",
     "output_file_path": "./output"
   },
   "report": {

@@ -3,13 +3,11 @@ import pkgutil
 import inspect
 import sys
 
-import pandas as pd
-
 import pii_anonymizer.standalone.analyze.detectors
 from pii_anonymizer.standalone.analyze.detectors.base_detector import BaseDetector
 from pii_anonymizer.standalone.anonymize.anonymizer import Anonymizer
 from pii_anonymizer.standalone.anonymize.anonymizer_result import AnonymizerResult
-from pii_anonymizer.common.constants import ANONYMIZE
+from pii_anonymizer.common.constants import ANALYZE, ANONYMIZE
 
 
 # TODO : refactor this to use the annotations instead of the module path.
@@ -67,8 +65,15 @@ class PIIDetector:
                 return True
         return False
 
+    def exclude_column(self, data):
+        exclude_columns = self.config[ANALYZE].get("exclude", [])
+        if data.name in exclude_columns:
+            return data.map(lambda x: AnonymizerResult(x, []))
+        return data.map(self.analyze_and_anonymize)
+
     def analyze_data_frame(self, input_data_frame):
-        result_df = input_data_frame.applymap(self.analyze_and_anonymize)
+        result_df = input_data_frame.apply(self.exclude_column)
+
         return result_df.applymap(lambda x: x.analyzer_results), result_df.applymap(
             lambda x: x.redacted_text
         )

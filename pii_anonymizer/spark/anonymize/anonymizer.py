@@ -1,23 +1,17 @@
 from hashlib import sha256
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType
 
 
 class Anonymizer:
-    @staticmethod
-    def replace(row, replace_string, pii_list):
-        new_row = []
-        for cell in row:
-            for word in pii_list:
-                if word in cell:
-                    cell = cell.replace(word, replace_string)
-            new_row.append(cell)
-        return new_row
+    @udf(returnType=StringType())
+    def replace(text: str, replace_string: str, pii_list):
+        for word in pii_list:
+            text = text.replace(word, replace_string)
+        return text
 
-    @staticmethod
-    def hash(row, pii_list):
-        new_row = []
-        for cell in row:
-            for word in pii_list:
-                if word in cell:
-                    cell = cell.replace(word, sha256(word.encode("utf-8")).hexdigest())
-            new_row.append(cell)
-        return new_row
+    @udf(returnType=StringType())
+    def hash(text: str, pii_list):
+        for word in pii_list:
+            text = text.replace(word, sha256(word.encode("utf-8")).hexdigest())
+        return text

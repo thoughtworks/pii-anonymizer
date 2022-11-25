@@ -19,7 +19,10 @@ class TestPIIDetector(TestCase):
             .appName("Test PIIDetector")
             .getOrCreate()
         )
-        config = {"anonymize": {"mode": "drop", "output_file_path": "./output"}}
+        config = {
+            "analyze": {"exclude": ["Exception"]},
+            "anonymize": {"mode": "drop", "output_file_path": "./output"},
+        }
         self.pii_detector = PIIDetector(config)
 
         self.array_structtype = StructType(
@@ -229,3 +232,118 @@ class TestPIIDetector(TestCase):
 
         self.assertEqual(actual.schema, expected.schema)
         self.assertEqual(actual.collect(), expected.collect())
+
+    def test_analyze_data_frame_returns_redacted_data(self):
+        test_data_frame = self.SPARK.createDataFrame(
+            [
+                (
+                    "First President of Singapore NRIC was S0000001I",
+                    "Some examples of phone numbers are +65 62345678",
+                ),
+                (
+                    "email test@sample.com and phone +65 62345678",
+                    "Phone one +65 62345678 Phone two +65 62345678",
+                ),
+            ],
+            ["summary", "phone number"],
+        )
+
+        actual_report, actual_redacted = self.pii_detector.analyze_data_frame(
+            test_data_frame
+        )
+
+        expected_redacted = self.SPARK.createDataFrame(
+            [
+                (
+                    "First President of Singapore NRIC was ",
+                    "Some examples of phone numbers are ",
+                ),
+                (
+                    "email  and phone ",
+                    "Phone one  Phone two ",
+                ),
+            ],
+            ["summary", "phone number"],
+        )
+
+        expected_report = self.SPARK.createDataFrame(
+            [
+                (
+                    [AnalyzerResult("S0000001I", "NRIC", 38, 47)],
+                    [AnalyzerResult("+65 62345678", "PHONE_NUMBER", 35, 47)],
+                ),
+                (
+                    [
+                        AnalyzerResult("test@sample.com", "EMAIL", 6, 21),
+                        AnalyzerResult("+65 62345678", "PHONE_NUMBER", 32, 44),
+                    ],
+                    [
+                        AnalyzerResult("+65 62345678", "PHONE_NUMBER", 10, 22),
+                        AnalyzerResult("+65 62345678", "PHONE_NUMBER", 33, 45),
+                    ],
+                ),
+            ],
+            self.schema,
+        )
+
+        self.assertEqual(actual_redacted.schema, expected_redacted.schema)
+        self.assertEqual(actual_redacted.collect(), expected_redacted.collect())
+        self.assertEqual(actual_report.collect(), expected_report.collect())
+
+    def test_analyze_data_frame_does_not_touch_excluded_column(self):
+        test_data_frame = self.SPARK.createDataFrame(
+            [
+                (
+                    "First President of Singapore NRIC was S0000001I",
+                    "Some examples of phone numbers are +65 62345678",
+                ),
+                (
+                    "email test@sample.com and phone +65 62345678",
+                    "Phone one +65 62345678 Phone two +65 62345678",
+                ),
+            ],
+            ["summary", "Exception"],
+        )
+
+        (actual_report, actual_redacted) = self.pii_detector.analyze_data_frame(
+            test_data_frame
+        )
+
+        expected_redacted = self.SPARK.createDataFrame(
+            [
+                (
+                    "First President of Singapore NRIC was ",
+                    "Some examples of phone numbers are +65 62345678",
+                ),
+                (
+                    "email  and phone ",
+                    "Phone one +65 62345678 Phone two +65 62345678",
+                ),
+            ],
+            ["summary", "Exception"],
+        )
+
+        expected_report = self.SPARK.createDataFrame(
+            [
+                ([AnalyzerResult("S0000001I", "NRIC", 38, 47)],),
+                (
+                    [
+                        AnalyzerResult("test@sample.com", "EMAIL", 6, 21),
+                        AnalyzerResult("+65 62345678", "PHONE_NUMBER", 32, 44),
+                    ],
+                ),
+            ],
+            StructType(
+                [
+                    StructField(
+                        "summary",
+                        ArrayType(self.array_structtype, True),
+                        nullable=False,
+                    )
+                ]
+            ),
+        )
+
+        self.assertEqual(actual_report.collect(), expected_report.collect())
+        self.assertEqual(actual_redacted.schema, expected_redacted.schema)
+        self.assertEqual(actual_redacted.collect(), expected_redacted.collect())
