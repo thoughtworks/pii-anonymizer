@@ -58,7 +58,8 @@ An example for the config JSON is located at `<PROJECT_ROOT>/pii-anonymizer.json
   "anonymize": {
     "mode": <replace|hash>,
     "value": "string to replace",
-    "output_file_path" : <PATH TO YOUR CSV OUTPUT FOLDER>
+    "output_file_path" : <PATH TO YOUR CSV OUTPUT FOLDER>,
+    "output_file_format": <csv|parquet>
   },
   "report" : {
     "location" : <PATH TO YOUR REPORT OUTPUT FOLDER>,
