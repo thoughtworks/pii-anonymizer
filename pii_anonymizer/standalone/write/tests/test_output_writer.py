@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import pandas as pd
 from pii_anonymizer.standalone.write.output_writer import (
     OutputWriter,
