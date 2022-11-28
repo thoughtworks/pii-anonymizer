@@ -12,7 +12,7 @@ from pii_anonymizer.spark.report.report_generator import ReportGenerator
 from pii_anonymizer.spark.acquire.csv_parser import CsvParser
 from pii_anonymizer.spark.analyze.detectors.pii_detector import PIIDetector
 from pii_anonymizer.spark.constants import ACQUIRE, REPORT
-from pii_anonymizer.spark.write.csv_writer import CsvWriter
+from pii_anonymizer.spark.write.output_writer import OutputWriter
 from pii_anonymizer.common.get_args import get_args
 
 
@@ -37,7 +37,7 @@ class Main:
             print("NO PII VALUES WERE FOUND!")
         else:
             report_generator.generate(results_df=pii_analysis_report)
-        CsvWriter(spark, config=self.config).write_csv(df=redacted_data_frame)
+        OutputWriter(spark, config=self.config).write(df=redacted_data_frame)
 
 
 if __name__ == "__main__":
