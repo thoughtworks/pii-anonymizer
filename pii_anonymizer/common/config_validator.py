@@ -7,12 +7,12 @@ anonymize_mode_err_msg = f"{ANONYMIZE}'s mode must be {' or '.join(anonymize_mod
 
 
 def validate(config):
+    anonymize_mode_config = config[ANONYMIZE]["mode"]
+
     if config.get(ANALYZE) is None:
         return ValueError(analyze_err_msg)
     if config.get(ANONYMIZE) is None:
         return ValueError(anonymize_err_msg)
-    # Fallback to default (drop)
-    if config[ANONYMIZE].get("mode") is None:
-        return
-    if config[ANONYMIZE]["mode"] not in anonymize_mode:
+
+    if anonymize_mode_config != None and anonymize_mode_config not in anonymize_mode:
         raise ValueError(anonymize_mode_err_msg)

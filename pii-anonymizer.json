@@ -8,7 +8,8 @@
   },
   "anonymize": {
     "mode": "hash",
-    "output_file_path": "./output"
+    "output_file_path": "./output",
+    "output_file_format": "parquet"
   },
   "report": {
     "location": "./output",
