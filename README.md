@@ -49,7 +49,7 @@ An example for the config JSON is located at `<PROJECT_ROOT>/pii-anonymizer.json
 ```
 {
   "acquire": {
-    "file_path": <FILE PATH TO YOUR INPUT CSV>,
+    "file_path": <FILE PATH TO YOUR INPUT CSV>, -> ./input_data/file.csv or ./input_data/*.csv to read all files that matches
     "delimiter": <YOUR CSV DELIMITER>
   },
   "analyze": {
@@ -59,7 +59,8 @@ An example for the config JSON is located at `<PROJECT_ROOT>/pii-anonymizer.json
     "mode": <replace|hash>,
     "value": "string to replace",
     "output_file_path" : <PATH TO YOUR CSV OUTPUT FOLDER>,
-    "output_file_format": <csv|parquet>
+    "output_file_format": <csv|parquet>,
+    "output_file_name": "anonymized" -> optionally, specify the output filename.
   },
   "report" : {
     "location" : <PATH TO YOUR REPORT OUTPUT FOLDER>,
