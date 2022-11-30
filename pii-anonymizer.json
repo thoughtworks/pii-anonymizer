@@ -1,6 +1,6 @@
 {
   "acquire": {
-    "file_path": "./test_data/test_data.csv",
+    "file_path": "./test_data/multiple_csv/*.csv",
     "delimiter": ","
   },
   "analyze": {
@@ -9,7 +9,8 @@
   "anonymize": {
     "mode": "hash",
     "output_file_path": "./output",
-    "output_file_format": "parquet"
+    "output_file_name": "anonymized_output",
+    "output_file_format": "csv"
   },
   "report": {
     "location": "./output",

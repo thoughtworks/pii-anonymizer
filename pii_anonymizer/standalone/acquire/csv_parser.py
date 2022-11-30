@@ -1,16 +1,14 @@
 import pandas as pd
-
-from pii_anonymizer.common.constants import FILE_PATH
+import dask.dataframe as dd
+from pii_anonymizer.common.constants import FILE_PATH, DELIMITER
 
 
 class CsvParser:
     def __init__(self, config):
         self.__validate_config(config)
-        self.input_path = config["file_path"]
+        self.input_path = config[FILE_PATH]
         self.delimiter = (
-            config["delimiter"]
-            if "delimiter" in config and config["delimiter"]
-            else ","
+            config[DELIMITER] if DELIMITER in config and config[DELIMITER] else ","
         )
 
     def __validate_config(self, config):
@@ -19,7 +17,7 @@ class CsvParser:
 
     def parse(self):
         try:
-            df = pd.read_csv(self.input_path, delimiter=self.delimiter)
+            df = dd.read_csv(self.input_path, delimiter=self.delimiter).compute()
         except pd.errors.EmptyDataError:
             return pd.DataFrame({})
 

@@ -45,6 +45,45 @@ class TestOutputWriter(TestCase):
         writer = OutputWriter(spark=self.SPARK, config=context)
         self.assertEqual(writer.get_output_file_path(), expected)
 
+    def test_correct_output_path_is_generated_when_reading_multiple_files(self):
+        output_format_list = ["csv", "parquet"]
+        for output_format in output_format_list:
+            with self.subTest():
+                context = {
+                    "acquire": {
+                        "file_path": "./test_data/multiple_csv/*.csv",
+                        "delimiter": ",",
+                    },
+                    "anonymize": {
+                        "output_file_path": "/anonymizer/output",
+                        "output_file_format": output_format,
+                    },
+                }
+                output_directory = "/anonymizer/output"
+                expected = f"{output_directory}/anonymized"
+                writer = OutputWriter(spark=self.SPARK, config=context)
+                self.assertEqual(writer.get_output_file_path(), expected)
+
+    def test_correct_output_path_is_generated_when_filename_is_given(self):
+        output_format_list = ["csv", "parquet"]
+        for output_format in output_format_list:
+            with self.subTest():
+                context = {
+                    "acquire": {
+                        "file_path": f"./test_data/multiple_csv/*.csv",
+                        "delimiter": ",",
+                    },
+                    "anonymize": {
+                        "output_file_path": "/anonymizer/output",
+                        "output_file_name": "hello",
+                        "output_file_format": output_format,
+                    },
+                }
+                output_directory = "/anonymizer/output"
+                expected = f"{output_directory}/hello"
+                writer = OutputWriter(spark=self.SPARK, config=context)
+                self.assertEqual(writer.get_output_file_path(), expected)
+
     def test_writer_call_correct_methods_on_write(self):
         output_format_list = ["csv", "parquet"]
         for output_format in output_format_list:

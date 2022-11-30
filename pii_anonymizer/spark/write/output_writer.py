@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession, DataFrame
 from pii_anonymizer.common.constants import (
     ANONYMIZE,
     ACQUIRE,
+    OUTPUT_FILE_NAME,
     OUTPUT_FILE_PATH,
     FILE_PATH,
     OUTPUT_FILE_FORMAT,
@@ -19,6 +20,7 @@ class OutputWriter:
         self.__validate_output_format(config)
         self.output_path = config[ANONYMIZE][OUTPUT_FILE_PATH]
         self.input_file_name = config[ACQUIRE][FILE_PATH]
+        self.output_file_name = config[ANONYMIZE].get(OUTPUT_FILE_NAME, None)
         self.spark = spark
 
     def __validate_config(self, config):
@@ -40,8 +42,17 @@ class OutputWriter:
     def get_output_file_path(self):
         file_name = self.input_file_name.split("/")[-1]
         file_name_no_extension = file_name.split(".")[0]
-        result = f"{self.output_path}/{file_name_no_extension}_anonymized"
-        return result
+
+        if self.output_file_name is None:
+            output_file_name = (
+                "anonymized"
+                if file_name_no_extension == "*"
+                else f"{file_name_no_extension}_anonymized"
+            )
+        else:
+            output_file_name = self.output_file_name
+
+        return f"{self.output_path}/{output_file_name}"
 
     def write(self, df: DataFrame):
         match self.output_format:

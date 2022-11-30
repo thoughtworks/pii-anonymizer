@@ -1,0 +1,3 @@
+National ID,Name,Phone Number,Address,Remarks,Exception
+S0000003E,Lee Kuan Yew,+65 91264944,112 Bedok,A typical email id would look something like test@sample.com,This column is not scan test@example.com
+S0000004C,Kwa Geok Choo,+65 91264944,112 Bedok,A typical email id would look something like ANC,This column is not scan test@example.com

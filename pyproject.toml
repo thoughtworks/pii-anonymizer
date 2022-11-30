@@ -11,6 +11,7 @@ python = "^3.10"
 pyspark = "~3.3.0"
 pandas = "^1.5.0"
 fastparquet = "^2022.11.0"
+dask = {extras = ["dataframe"], version = "^2022.11.1"}
 
 [tool.poetry.group.dev.dependencies]
 bumpver = "^2022.1119"
