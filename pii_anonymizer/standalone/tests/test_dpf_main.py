@@ -25,8 +25,8 @@ class TestDPFMain(TestCase):
     @patch(
         "pii_anonymizer.standalone.analyze.detectors.pii_detector.PIIDetector.analyze_data_frame"
     )
-    @patch("pii_anonymizer.standalone.acquire.csv_parser.CsvParser.parse")
-    @patch("pii_anonymizer.standalone.acquire.csv_parser.CsvParser.__init__")
+    @patch("pii_anonymizer.standalone.acquire.input_parser.InputParser.parse")
+    @patch("pii_anonymizer.standalone.acquire.input_parser.InputParser.__init__")
     def test_run_parses_the_config_file_and_invokes_respective_stages_correctly(
         self,
         mock_csv_parser_init,
@@ -66,8 +66,8 @@ class TestDPFMain(TestCase):
     @patch(
         "pii_anonymizer.standalone.analyze.detectors.pii_detector.PIIDetector.analyze_data_frame"
     )
-    @patch("pii_anonymizer.standalone.acquire.csv_parser.CsvParser.parse")
-    @patch("pii_anonymizer.standalone.acquire.csv_parser.CsvParser.__init__")
+    @patch("pii_anonymizer.standalone.acquire.input_parser.InputParser.parse")
+    @patch("pii_anonymizer.standalone.acquire.input_parser.InputParser.__init__")
     def test_run_short_circuits_generate_report_when_no_PII_values_detected(
         self,
         mock_csv_parser_init,

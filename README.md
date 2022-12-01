@@ -25,6 +25,7 @@ The framework aims to work on a two-fold principle for detecting PII:
     * [x] Replacement ('replace'): Replaces a detected sensitive value with a specified surrogate value. Leave the value empty to simply delete detected sensitive value.
     * [x] Hash ('hash'): Hash detected sensitive value with sha256.
 
+Currently supported file formats: `csv, parquet`
 
 ### TO-DO
 Following features  are part of the backlog with more features coming soon
@@ -45,6 +46,8 @@ You can have a detailed at upcoming features and backlog in this [Github Board](
 2. Setup hooks and install packages with `make install`
 
 ### Config JSON
+Limitation: when reading multiple files, all files that matches the file_path must have same headers. Additionally, when file format is not given anonymizer will assume that the file format is the first matched filename. Thus, when the file_path ends with `/*` and the folder contains mixed file format, the operation will fail.
+
 An example for the config JSON is located at `<PROJECT_ROOT>/pii-anonymizer.json`
 ```
 {

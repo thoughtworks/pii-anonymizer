@@ -9,7 +9,7 @@ import json
 
 from pyspark.sql import SparkSession
 from pii_anonymizer.spark.report.report_generator import ReportGenerator
-from pii_anonymizer.spark.acquire.csv_parser import CsvParser
+from pii_anonymizer.spark.acquire.input_parser import InputParser
 from pii_anonymizer.spark.analyze.detectors.pii_detector import PIIDetector
 from pii_anonymizer.spark.constants import ACQUIRE, REPORT
 from pii_anonymizer.spark.write.output_writer import OutputWriter
@@ -27,7 +27,7 @@ class Main:
         spark = (
             SparkSession.builder.master("local").appName("PIIDetector").getOrCreate()
         )
-        parsed_data_frame = CsvParser(spark, config=self.config[ACQUIRE]).parse()
+        parsed_data_frame = InputParser(spark, config=self.config[ACQUIRE]).parse()
         pii_analysis_report, redacted_data_frame = PIIDetector(
             self.config
         ).analyze_data_frame(parsed_data_frame)

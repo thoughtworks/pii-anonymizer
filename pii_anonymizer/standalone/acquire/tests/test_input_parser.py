@@ -1,17 +1,17 @@
 from unittest import TestCase
 import os
 import pandas as pd
-from pii_anonymizer.standalone.acquire.csv_parser import CsvParser
+from pii_anonymizer.standalone.acquire.input_parser import InputParser
 
 
-class TestCsvParser(TestCase):
+class TestInputParser(TestCase):
     def setUp(self):
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
     def test_invalid_config_gets_caught_during_initialization(self):
         context = {}
         with self.assertRaises(ValueError) as ve:
-            CsvParser(config=context)
+            InputParser(config=context)
         self.assertEqual(
             str(ve.exception), "Config 'file_path' needs to be provided for parsing"
         )
@@ -19,7 +19,7 @@ class TestCsvParser(TestCase):
     def test_if_valid_csv_file_provided_returns_pandas_df(self):
         file_path = "test_data/comma_delimited_file.csv".format(self.current_dir)
         config = {"file_path": file_path, "delimiter": ""}
-        test_csv_parser_valid_file_path = CsvParser(config=config)
+        test_csv_parser_valid_file_path = InputParser(config=config)
         expected = pd.DataFrame({"name": ["Lisa Beard"], "ssn": ["557-39-2479"]})
         actual = test_csv_parser_valid_file_path.parse()
         self.assertEqual(actual.to_dict(), expected.to_dict())
@@ -29,7 +29,7 @@ class TestCsvParser(TestCase):
     ):
         file_path = "test_data/pipe_delimited_file.csv".format(self.current_dir)
         config = {"file_path": file_path, "delimiter": "|"}
-        test_csv_parser_valid_file_path = CsvParser(config=config)
+        test_csv_parser_valid_file_path = InputParser(config=config)
         expected = pd.DataFrame({"name": ["Lisa Beard"], "ssn": ["557-39-2479"]})
         actual = test_csv_parser_valid_file_path.parse()
         self.assertEqual(actual.to_dict(), expected.to_dict())
@@ -37,7 +37,7 @@ class TestCsvParser(TestCase):
     def test_if_empty_csv_file_returns_empty_pandas_df(self):
         file_path = "test_data/empty.csv".format(self.current_dir)
         config = {"file_path": file_path}
-        test_csv_parser_valid_file_path = CsvParser(config=config)
+        test_csv_parser_valid_file_path = InputParser(config=config)
         expected = pd.DataFrame({})
         actual = test_csv_parser_valid_file_path.parse()
         self.assertEqual(actual.to_dict(), expected.to_dict())
@@ -46,5 +46,5 @@ class TestCsvParser(TestCase):
         file_path = "test_data/missing_comma.csv".format(self.current_dir)
         config = {"file_path": file_path}
         with self.assertRaises(ValueError) as ve:
-            CsvParser(config=config).parse()
+            InputParser(config=config).parse()
         self.assertEqual(str(ve.exception), "Dataframe contains NULL values")

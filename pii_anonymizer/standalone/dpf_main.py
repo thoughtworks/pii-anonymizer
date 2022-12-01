@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath("."))
 import json
 
 from pii_anonymizer.standalone.report.report_generator import ReportGenerator
-from pii_anonymizer.standalone.acquire.csv_parser import CsvParser
+from pii_anonymizer.standalone.acquire.input_parser import InputParser
 from pii_anonymizer.standalone.analyze.detectors.pii_detector import PIIDetector
 from pii_anonymizer.common.constants import ACQUIRE, REPORT
 from pii_anonymizer.standalone.write.output_writer import OutputWriter
@@ -21,7 +21,7 @@ class DPFMain:
     # TODO : validate the config for the stages right here
     def run(self):
         validate(self.config)
-        parsed_data_frame = CsvParser(config=self.config[ACQUIRE]).parse()
+        parsed_data_frame = InputParser(config=self.config[ACQUIRE]).parse()
         pii_analysis_report, anonymized_data_frame = PIIDetector(
             self.config
         ).analyze_data_frame(parsed_data_frame)
