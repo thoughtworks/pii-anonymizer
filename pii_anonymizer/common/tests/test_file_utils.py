@@ -27,7 +27,7 @@ class TestFileUtils(TestCase):
 
     def test_should_return_file_format(self):
         test_cases = [
-            {"path": "./test_data/*", "expect": "csv"},
+            {"path": "./test_data/multiple_csv/*", "expect": "csv"},
             {"path": "./test_data/*.csv", "expect": "csv"},
             {"path": "./test_data/test_data.csv", "expect": "csv"},
             {"path": "./test_data/test_data.parquet", "expect": "parquet"},
