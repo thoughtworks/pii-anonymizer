@@ -1,0 +1,37 @@
+from typing import List
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
+
+from pii_anonymizer.common.constants import DETECTOR_PRECEDENCE
+
+
+def filter_overlapped_analysis(analyzer_results: List[AnalyzerResult]):
+    # Compare every element in list
+    # If overlap compare overlapping element's distance (start/end)
+    # if match is equal check which detector has precedent before remove
+    index_to_remove = set()
+
+    for a in range(len(analyzer_results)):
+        for b in range(a + 1, len(analyzer_results)):
+            result_a = analyzer_results[a]
+            result_b = analyzer_results[b]
+            if result_b.start <= result_a.end or result_b.end >= result_a.start:
+                # Overlap
+                a_distance = result_a.end - result_a.start
+                b_distance = result_b.end - result_b.start
+                if a_distance > b_distance:
+                    index_to_remove.add(b)
+                elif a_distance < b_distance:
+                    index_to_remove.add(a)
+                else:
+                    result_a_precedence = DETECTOR_PRECEDENCE[result_a.type]
+                    result_b_precedence = DETECTOR_PRECEDENCE[result_b.type]
+                    if result_a_precedence < result_b_precedence:
+                        index_to_remove.add(b)
+                    elif result_a_precedence > result_b_precedence:
+                        index_to_remove.add(a)
+
+    sorted_index = sorted(index_to_remove, reverse=True)
+    for index in sorted_index:
+        analyzer_results.pop(index)
+
+    return analyzer_results

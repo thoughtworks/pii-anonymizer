@@ -1,6 +1,6 @@
 import re
+from typing import List
 from abc import ABC, abstractmethod
-
 from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
 
 
@@ -20,8 +20,8 @@ class BaseDetector(ABC):
     def validate(self, text):
         return True
 
-    def execute(self, text):
-        results = []
+    def execute(self, text: str):
+        results: List[AnalyzerResult] = []
         matches = re.finditer(self.get_pattern(), text)
         for match in matches:
             matched_string = match.string[match.start() : match.end()]
