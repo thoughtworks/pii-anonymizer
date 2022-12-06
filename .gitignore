@@ -15,5 +15,6 @@ generate_fake_data.py
 scratchpad.py
 *.egg-info
 
+test_data/generated.csv
 # Mac
 .DS_Store

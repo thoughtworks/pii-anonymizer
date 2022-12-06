@@ -6,6 +6,10 @@ install:
 	pre-commit install
 	poetry install
 
+.PHONY: data-gen
+data-gen:
+	poetry run python test_data/test_data_gen.py
+
 .PHONY: run
 run:
 	poetry run python -m pii_anonymizer.standalone
