@@ -24,11 +24,11 @@ class InputParser:
             match get_format(self.input_path):
                 case "csv":
                     df = dd.read_csv(
-                        self.input_path, delimiter=self.delimiter, dtype=str
+                        self.input_path, delimiter=self.delimiter
                     ).compute()
                 case "parquet":
                     df = dd.read_parquet(
-                        self.input_path, delimiter=self.delimiter, dtype=str
+                        self.input_path, delimiter=self.delimiter
                     ).compute()
         except pd.errors.EmptyDataError:
             return pd.DataFrame({})

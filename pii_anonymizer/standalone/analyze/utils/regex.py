@@ -41,10 +41,6 @@ class RegEx:
         self.regex_string += "\\d"
         return self
 
-    def extract_digit(self):
-        self.regex_string += "(?:\D*\d)"
-        return self
-
     def num_occurrences(self, number):
         if number < 1:
             raise ValueError
