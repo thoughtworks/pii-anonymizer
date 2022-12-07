@@ -13,12 +13,12 @@ class TestPhoneNumberDetector(TestCase):
     def test_default_property_values_are_correct(self):
         self.assertEqual("PHONE_NUMBER", self.phone_number_detector.name)
         self.assertEqual(
-            "[0-9+(](?:\\D*\\d){5,15}",
+            "([+\(]\d{1,3}[)]?|\d)(\d|[\ .\-x]){4,}\d",
             self.phone_number_detector.pattern,
         )
 
     def test_invalid_phone_number_does_not_get_detected(self):
-        self.assertEqual(len(self.phone_number_detector.execute("S0000001I")), 0)
+        self.assertEqual(len(self.phone_number_detector.execute("S00001I")), 0)
 
     def test_valid_phone_number_gets_detected_correctly(self):
         test_cases = [
@@ -76,15 +76,15 @@ class TestPhoneNumberDetector(TestCase):
             },
             {
                 "text": "Call now: 02-123-4567 ext 555",
-                "match": "02-123-4567 ext 555",
+                "match": "02-123-4567",
                 "start": 10,
-                "end": 29,
+                "end": 21,
             },
             {
                 "text": "โทร 02-123-4567 ต่อ 555",
-                "match": "02-123-4567 ต่อ 555",
+                "match": "02-123-4567",
                 "start": 4,
-                "end": 23,
+                "end": 15,
             },
         ]
         for test_case in test_cases:
