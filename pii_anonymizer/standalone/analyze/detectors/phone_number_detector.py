@@ -5,29 +5,26 @@ from pii_anonymizer.standalone.analyze.utils.regex import RegEx
 class PhoneNumberDetector(BaseDetector):
     def __init__(self):
         self.name = "PHONE_NUMBER"
-        regex_pipe = RegEx().pipe().build()
-
-        regex_with_country_code_and_no_space = "(\\+65?\\s?[689]\\d{7})"
-        regex_with_country_code_and_single_space = "(\\+65?\\s?[689]\\d{3} \\d{4})"
-        regex_no_country_code_and_no_space = "([689]\\d{7})"
-        regex_no_country_code_and_single_space = "([689]\\d{3} \\d{4})"
-        regex_with_country_code_in_brackets_and_no_space = "([(]65[)]\\s?[689]\\d{7})"
-        regex_with_country_code_in_brackets_and_single_space = (
-            "([(]65[)]\\s?[689]\\d{3} \\d{4})"
-        )
 
         self.pattern = (
-            regex_with_country_code_and_no_space
-            + regex_pipe
-            + regex_with_country_code_and_single_space
-            + regex_pipe
-            + regex_no_country_code_and_no_space
-            + regex_pipe
-            + regex_no_country_code_and_single_space
-            + regex_pipe
-            + regex_with_country_code_in_brackets_and_no_space
-            + regex_pipe
-            + regex_with_country_code_in_brackets_and_single_space
+            RegEx()
+            .group_start()
+            .one_of("+\(")
+            .any_digit()
+            .range_occurrences(1, 3)
+            .one_of(")")
+            .zero_or_one_occurrences()
+            .pipe()
+            .any_digit()
+            .group_end()
+            .group_start()
+            .any_digit()
+            .pipe()
+            .one_of("\ .\-x")
+            .group_end()
+            .at_least(4)
+            .any_digit()
+            .build()
         )
 
     def get_name(self):

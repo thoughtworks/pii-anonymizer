@@ -2,9 +2,14 @@ import importlib
 import pkgutil
 import inspect
 import sys
+from typing import List
+from pii_anonymizer.common.analyze.filter_overlap_analysis import (
+    filter_overlapped_analysis,
+)
 
 import pii_anonymizer.standalone.analyze.detectors
 from pii_anonymizer.standalone.analyze.detectors.base_detector import BaseDetector
+from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
 from pii_anonymizer.standalone.anonymize.anonymizer import Anonymizer
 from pii_anonymizer.standalone.anonymize.anonymizer_result import AnonymizerResult
 from pii_anonymizer.common.constants import ANALYZE, ANONYMIZE
@@ -42,22 +47,24 @@ class PIIDetector:
 
     # TODO : Should we make this static?
     def analyze_and_anonymize(self, text: str):
-        analyzer_results = []
+        analyzer_results: List[AnalyzerResult] = []
         for detector in self.detectors:
             analyzer_results = analyzer_results + detector.execute(text)
 
         mode = self.config[ANONYMIZE].get("mode")
         value = self.config[ANONYMIZE].get("value", "")
 
+        filtered_results = filter_overlapped_analysis(analyzer_results)
+
         match mode:
             case "replace":
-                redacted_text = Anonymizer.replace(text, value, analyzer_results)
+                redacted_text = Anonymizer.replace(text, value, filtered_results)
             case "hash":
-                redacted_text = Anonymizer.hash(text, analyzer_results)
+                redacted_text = Anonymizer.hash(text, filtered_results)
             case _:
-                redacted_text = Anonymizer.replace(text, value, analyzer_results)
+                redacted_text = Anonymizer.replace(text, value, filtered_results)
 
-        return AnonymizerResult(redacted_text, analyzer_results)
+        return AnonymizerResult(redacted_text, filtered_results)
 
     def __contains_pii(self, results):
         for result in results:

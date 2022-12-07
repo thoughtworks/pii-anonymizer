@@ -13,17 +13,12 @@ class TestPhoneNumberDetector(TestCase):
     def test_default_property_values_are_correct(self):
         self.assertEqual("PHONE_NUMBER", self.phone_number_detector.name)
         self.assertEqual(
-            "(\\+65?\\s?[689]\\d{7})|"
-            "(\\+65?\\s?[689]\\d{3} \\d{4})|"
-            "([689]\\d{7})|"
-            "([689]\\d{3} \\d{4})|"
-            "([(]65[)]\\s?[689]\\d{7})|"
-            "([(]65[)]\\s?[689]\\d{3} \\d{4})",
+            "([+\(]\d{1,3}[)]?|\d)(\d|[\ .\-x]){4,}\d",
             self.phone_number_detector.pattern,
         )
 
     def test_invalid_phone_number_does_not_get_detected(self):
-        self.assertEqual(len(self.phone_number_detector.execute("S0000001I")), 0)
+        self.assertEqual(len(self.phone_number_detector.execute("S00001I")), 0)
 
     def __assert_single_result(self, text_to_be_tested, start, end):
         actual = self.phone_number_detector.execute(text_to_be_tested)
@@ -32,26 +27,80 @@ class TestPhoneNumberDetector(TestCase):
         self.assertEqual(expected, actual[0])
 
     def test_valid_phone_number_gets_detected_correctly(self):
-        self.__assert_single_result("+65 65781234", 0, 12)
-        self.__assert_single_result("+65 85781234", 0, 12)
-        self.__assert_single_result("+65 95781234", 0, 12)
-
-        self.__assert_single_result("+65 6578 1234", 0, 13)
-        self.__assert_single_result("+65 8578 1234", 0, 13)
-        self.__assert_single_result("+65 9578 1234", 0, 13)
-
-        self.__assert_single_result("65781234", 0, 8)
-        self.__assert_single_result("85781234", 0, 8)
-        self.__assert_single_result("95781234", 0, 8)
-
-        self.__assert_single_result("6578 1234", 0, 9)
-        self.__assert_single_result("8578 1234", 0, 9)
-        self.__assert_single_result("9578 1234", 0, 9)
-
-        self.__assert_single_result("(65) 65781234", 0, 13)
-        self.__assert_single_result("(65) 85781234", 0, 13)
-        self.__assert_single_result("(65) 95781234", 0, 13)
-
-        self.__assert_single_result("(65) 6578 1234", 0, 14)
-        self.__assert_single_result("(65) 8578 1234", 0, 14)
-        self.__assert_single_result("(65) 9578 1234", 0, 14)
+        test_cases = [
+            {"text": "65781234", "match": "65781234", "start": 0, "end": 8},
+            {"text": "85781234", "match": "85781234", "start": 0, "end": 8},
+            {"text": "95781234", "match": "95781234", "start": 0, "end": 8},
+            {"text": "6578 1234", "match": "6578 1234", "start": 0, "end": 9},
+            {"text": "8578 1234", "match": "8578 1234", "start": 0, "end": 9},
+            {"text": "9578 1234", "match": "9578 1234", "start": 0, "end": 9},
+            {"text": "+65 65781234", "match": "+65 65781234", "start": 0, "end": 12},
+            {"text": "+65 85781234", "match": "+65 85781234", "start": 0, "end": 12},
+            {"text": "+65 95781234", "match": "+65 95781234", "start": 0, "end": 12},
+            {"text": "+66 65781234", "match": "+66 65781234", "start": 0, "end": 12},
+            {"text": "+65 6578 1234", "match": "+65 6578 1234", "start": 0, "end": 13},
+            {"text": "+65 8578 1234", "match": "+65 8578 1234", "start": 0, "end": 13},
+            {"text": "+65 9578 1234", "match": "+65 9578 1234", "start": 0, "end": 13},
+            {"text": "+66 6578 1234", "match": "+66 6578 1234", "start": 0, "end": 13},
+            {"text": "(65) 65781234", "match": "(65) 65781234", "start": 0, "end": 13},
+            {"text": "(65) 85781234", "match": "(65) 85781234", "start": 0, "end": 13},
+            {"text": "(65) 95781234", "match": "(65) 95781234", "start": 0, "end": 13},
+            {
+                "text": "(65) 6578 1234",
+                "match": "(65) 6578 1234",
+                "start": 0,
+                "end": 14,
+            },
+            {
+                "text": "(65) 8578 1234",
+                "match": "(65) 8578 1234",
+                "start": 0,
+                "end": 14,
+            },
+            {
+                "text": "(65) 9578 1234",
+                "match": "(65) 9578 1234",
+                "start": 0,
+                "end": 14,
+            },
+            # Faker's
+            {"text": "468.168.1559", "match": "468.168.1559", "start": 0, "end": 12},
+            {"text": "591-231-6760", "match": "591-231-6760", "start": 0, "end": 12},
+            {"text": "055-692-3144", "match": "055-692-3144", "start": 0, "end": 12},
+            {"text": "(540)180-1611", "match": "(540)180-1611", "start": 0, "end": 13},
+            {
+                "text": "899-040-0003x606",
+                "match": "899-040-0003x606",
+                "start": 0,
+                "end": 16,
+            },
+            {
+                "text": "669.511.0962x1518",
+                "match": "669.511.0962x1518",
+                "start": 0,
+                "end": 17,
+            },
+            {
+                "text": "Call now: 02-123-4567 ext 555",
+                "match": "02-123-4567",
+                "start": 10,
+                "end": 21,
+            },
+            {
+                "text": "โทร 02-123-4567 ต่อ 555",
+                "match": "02-123-4567",
+                "start": 4,
+                "end": 15,
+            },
+        ]
+        for test_case in test_cases:
+            with self.subTest():
+                actual = self.phone_number_detector.execute(test_case["text"])
+                expected = AnalyzerResult(
+                    test_case["match"],
+                    "PHONE_NUMBER",
+                    test_case["start"],
+                    test_case["end"],
+                )
+                self.assertEqual(len(actual), 1)
+                self.assertEqual(expected, actual[0])
