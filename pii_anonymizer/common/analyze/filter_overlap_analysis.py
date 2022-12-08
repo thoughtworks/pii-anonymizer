@@ -1,7 +1,7 @@
 from typing import List
 from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 
-from pii_anonymizer.common.constants import DETECTOR_PRECEDENCE
+from pii_anonymizer.common.constants import DETECTOR_PRIORITY
 
 
 def filter_overlapped_analysis(analyzer_results: List[AnalyzerResult]):
@@ -27,8 +27,8 @@ def filter_overlapped_analysis(analyzer_results: List[AnalyzerResult]):
             elif a_distance < b_distance:
                 index_to_remove.add(a)
             else:
-                result_a_precedence = DETECTOR_PRECEDENCE[result_a.type]
-                result_b_precedence = DETECTOR_PRECEDENCE[result_b.type]
+                result_a_precedence = DETECTOR_PRIORITY[result_a.type]
+                result_b_precedence = DETECTOR_PRIORITY[result_b.type]
                 if result_a_precedence < result_b_precedence:
                     index_to_remove.add(a + 1)
                 elif result_a_precedence > result_b_precedence:
