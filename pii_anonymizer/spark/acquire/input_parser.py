@@ -25,7 +25,6 @@ class InputParser:
             format=format,
             sep=self.delimiter,
             header="true",
-            inferSchema="true",
         )
 
         return df

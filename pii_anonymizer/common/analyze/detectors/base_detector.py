@@ -1,7 +1,7 @@
 import re
 from typing import List
 from abc import ABC, abstractmethod
-from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 
 
 class BaseDetector(ABC):

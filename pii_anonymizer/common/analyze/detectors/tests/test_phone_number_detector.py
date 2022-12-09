@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from pii_anonymizer.standalone.analyze.detectors.phone_number_detector import (
+from pii_anonymizer.common.analyze.detectors.phone_number_detector import (
     PhoneNumberDetector,
 )
-from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 
 
 class TestPhoneNumberDetector(TestCase):

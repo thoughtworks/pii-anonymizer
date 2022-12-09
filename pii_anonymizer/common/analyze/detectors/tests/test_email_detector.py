@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from pii_anonymizer.standalone.analyze.detectors.email_detector import EmailDetector
+from pii_anonymizer.common.analyze.detectors.email_detector import EmailDetector
 
 
 class TestEmailDetector(TestCase):

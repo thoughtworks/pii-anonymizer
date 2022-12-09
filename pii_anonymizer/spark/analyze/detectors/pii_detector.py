@@ -5,9 +5,12 @@ import sys
 from pyspark.sql import DataFrame
 from pyspark.sql.types import StructField, StructType, ArrayType, StringType, LongType
 from pyspark.sql.functions import lit, array
+from pii_anonymizer.common.analyze.filter_overlap_analysis import (
+    filter_overlapped_analysis,
+)
 from pii_anonymizer.common.constants import ANALYZE, ANONYMIZE
-from pii_anonymizer.spark.analyze.detectors.base_detector import BaseDetector
-import pii_anonymizer.spark.analyze.detectors
+import pii_anonymizer.common.analyze.detectors
+from pii_anonymizer.common.analyze.detectors.base_detector import BaseDetector
 from pii_anonymizer.spark.anonymize.anonymizer import Anonymizer
 
 
@@ -20,8 +23,8 @@ class PIIDetector:
         modules = [
             modname
             for importer, modname, ispkg in pkgutil.walk_packages(
-                path=pii_anonymizer.spark.analyze.detectors.__path__,
-                prefix=pii_anonymizer.spark.analyze.detectors.__name__ + ".",
+                path=pii_anonymizer.common.analyze.detectors.__path__,
+                prefix=pii_anonymizer.common.analyze.detectors.__name__ + ".",
             )
             if "tests" not in modname
         ]
@@ -46,7 +49,9 @@ class PIIDetector:
             results = []
             for detector in self.detectors:
                 results += detector.execute(element)
-            new_row.append(results)
+
+            filtered = filter_overlapped_analysis(results)
+            new_row.append(filtered)
 
         return new_row
 
@@ -124,7 +129,6 @@ class PIIDetector:
         ]
         excluded_data_frame = input_data_frame.select(selected_columns)
         report = self.get_analyzer_results(excluded_data_frame)
-        # report = self.get_analyzer_results(input_data_frame)
         redacted = self.get_redacted_text(input_data_frame, report)
 
         return report, redacted

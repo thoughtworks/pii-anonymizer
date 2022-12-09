@@ -1,9 +1,9 @@
 from unittest import TestCase
 
 
-from pii_anonymizer.standalone.analyze.detectors.base_detector import BaseDetector
-from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
-from pii_anonymizer.standalone.analyze.utils.regex import RegEx
+from pii_anonymizer.common.analyze.detectors.base_detector import BaseDetector
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
+from pii_anonymizer.common.analyze.regex import RegEx
 
 
 class TestBaseDetector(TestCase):

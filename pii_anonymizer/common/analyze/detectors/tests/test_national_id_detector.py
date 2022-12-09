@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from pii_anonymizer.standalone.analyze.detectors.national_id_detector import (
+from pii_anonymizer.common.analyze.detectors.national_id_detector import (
     NationalIdDetector,
 )
 

@@ -6,7 +6,7 @@ import pandas as pd
 from freezegun import freeze_time
 
 from pii_anonymizer.standalone.report.report_generator import ReportGenerator
-from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 
 
 class TestReportGenerator(TestCase):

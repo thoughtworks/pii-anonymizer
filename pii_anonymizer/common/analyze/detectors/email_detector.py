@@ -1,5 +1,5 @@
-from pii_anonymizer.spark.analyze.detectors.base_detector import BaseDetector
-from pii_anonymizer.spark.analyze.utils.regex import RegEx
+from pii_anonymizer.common.analyze.detectors.base_detector import BaseDetector
+from pii_anonymizer.common.analyze.regex import RegEx
 
 
 class EmailDetector(BaseDetector):

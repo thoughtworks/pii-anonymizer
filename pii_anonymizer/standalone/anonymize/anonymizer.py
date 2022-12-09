@@ -1,6 +1,6 @@
 from typing import List
 
-from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 
 from hashlib import sha256
 

@@ -7,9 +7,9 @@ from pii_anonymizer.common.analyze.filter_overlap_analysis import (
     filter_overlapped_analysis,
 )
 
-import pii_anonymizer.standalone.analyze.detectors
-from pii_anonymizer.standalone.analyze.detectors.base_detector import BaseDetector
-from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
+import pii_anonymizer.common.analyze.detectors
+from pii_anonymizer.common.analyze.detectors.base_detector import BaseDetector
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 from pii_anonymizer.standalone.anonymize.anonymizer import Anonymizer
 from pii_anonymizer.standalone.anonymize.anonymizer_result import AnonymizerResult
 from pii_anonymizer.common.constants import ANALYZE, ANONYMIZE
@@ -25,8 +25,8 @@ class PIIDetector:
         modules = [
             modname
             for importer, modname, ispkg in pkgutil.walk_packages(
-                path=pii_anonymizer.standalone.analyze.detectors.__path__,
-                prefix=pii_anonymizer.standalone.analyze.detectors.__name__ + ".",
+                path=pii_anonymizer.common.analyze.detectors.__path__,
+                prefix=pii_anonymizer.common.analyze.detectors.__name__ + ".",
             )
             if "tests" not in modname
         ]

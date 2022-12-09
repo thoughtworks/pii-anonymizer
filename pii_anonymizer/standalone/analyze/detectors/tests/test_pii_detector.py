@@ -2,7 +2,7 @@ import pandas as pd
 from unittest import TestCase
 
 from pii_anonymizer.standalone.analyze.detectors.pii_detector import PIIDetector
-from pii_anonymizer.standalone.analyze.utils.analyzer_result import AnalyzerResult
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 from pii_anonymizer.standalone.anonymize.anonymizer_result import AnonymizerResult
 
 

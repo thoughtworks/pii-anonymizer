@@ -45,6 +45,21 @@ class RegEx:
         self.regex_string += "(?:\D*\d)"
         return self
 
+    def group_start(self):
+        self.regex_string += "("
+        return self
+
+    def group_end(self):
+        self.regex_string += ")"
+        return self
+
+    def at_least(self, number):
+        if number < 1:
+            raise ValueError
+
+        self.regex_string += "{" + str(number) + ",}"
+        return self
+
     def num_occurrences(self, number):
         if number < 1:
             raise ValueError
