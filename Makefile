@@ -14,6 +14,10 @@ data-gen:
 run:
 	poetry run python -m pii_anonymizer.standalone
 
+.PHONY: generate-key
+generate-key:
+	poetry run python -m pii_anonymizer.key
+
 .PHONY: spark-run
 spark-run:
 	poetry run python -m pii_anonymizer.spark

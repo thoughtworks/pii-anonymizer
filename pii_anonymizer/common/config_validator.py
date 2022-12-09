@@ -2,7 +2,7 @@ from pii_anonymizer.common.constants import ANONYMIZE, ANALYZE
 
 analyze_err_msg = f"{ANALYZE} key is required in config"
 anonymize_err_msg = f"{ANONYMIZE} key is required in config"
-anonymize_mode = ["replace", "hash"]
+anonymize_mode = ["replace", "hash", "encrypt"]
 anonymize_mode_err_msg = f"{ANONYMIZE}'s mode must be {' or '.join(anonymize_mode)}"
 
 

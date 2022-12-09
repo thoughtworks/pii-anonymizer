@@ -61,6 +61,8 @@ class PIIDetector:
                 redacted_text = Anonymizer.replace(text, value, filtered_results)
             case "hash":
                 redacted_text = Anonymizer.hash(text, filtered_results)
+            case "encrypt":
+                redacted_text = Anonymizer.encrypt(text, filtered_results)
             case _:
                 redacted_text = Anonymizer.replace(text, value, filtered_results)
 
