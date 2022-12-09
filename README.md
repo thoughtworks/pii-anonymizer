@@ -20,6 +20,7 @@ The framework aims to work on a two-fold principle for detecting PII:
  * Following detectors specific to Singapore have been completed:
    * [x] PHONE_NUMBER : A telephone number.
    * [x] FIN/NRIC : A unique set of nine alpha-numeric characters on the Singapore National Registration Identity Card.
+   * [x] THAI_ID : 13 numeric digits of Thai Citizen ID
 
  * Following anonymizers have been added
     * [x] Replacement ('replace'): Replaces a detected sensitive value with a specified surrogate value. Leave the value empty to simply delete detected sensitive value.
