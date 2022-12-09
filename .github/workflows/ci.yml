@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+    paths:
+      - pii_anonymizer
 
 jobs:
-  build-deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
