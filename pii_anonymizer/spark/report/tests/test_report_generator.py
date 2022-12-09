@@ -14,7 +14,7 @@ from pyspark.sql.types import (
     LongType,
 )
 from pii_anonymizer.spark.report.report_generator import ReportGenerator
-from pii_anonymizer.spark.analyze.utils.analyzer_result import AnalyzerResult
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 
 
 class TestReportGenerator(TestCase):

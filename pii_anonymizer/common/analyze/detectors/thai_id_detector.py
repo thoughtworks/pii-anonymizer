@@ -6,7 +6,7 @@ import re
 class ThaiIdDetector(BaseDetector):
     def __init__(self):
         self.name = "TH_ID"
-        self.pattern = RegEx().extract_digit().num_occurrences(13).build()
+        self.pattern = RegEx().any_digit().any_characters().any_digit().build()
 
     def get_name(self):
         return self.name

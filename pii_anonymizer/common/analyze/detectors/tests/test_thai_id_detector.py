@@ -15,7 +15,7 @@ class TestThaiIdDetector(TestCase):
 
     def test_get_pattern_returns_compiled_regex(self):
         actual_value = self.thai_id_detector.get_pattern()
-        return_value = "(?:\D*\d){13}"
+        return_value = "\d.*\d"
         self.assertEqual(return_value, actual_value)
 
     def test_valid_id(self):

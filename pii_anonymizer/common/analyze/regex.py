@@ -41,8 +41,8 @@ class RegEx:
         self.regex_string += "\\d"
         return self
 
-    def extract_digit(self):
-        self.regex_string += "(?:\D*\d)"
+    def any_characters(self):
+        self.regex_string += ".*"
         return self
 
     def group_start(self):

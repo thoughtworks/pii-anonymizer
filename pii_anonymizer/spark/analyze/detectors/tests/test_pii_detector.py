@@ -1,7 +1,7 @@
 from unittest import TestCase
 from pyspark.sql import SparkSession
 from pii_anonymizer.spark.analyze.detectors.pii_detector import PIIDetector
-from pii_anonymizer.spark.analyze.utils.analyzer_result import AnalyzerResult
+from pii_anonymizer.common.analyze.analyzer_result import AnalyzerResult
 from pyspark.sql.types import (
     StructField,
     StructType,
