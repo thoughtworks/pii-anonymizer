@@ -25,16 +25,29 @@ The framework aims to work on a two-fold principle for detecting PII:
  * Following anonymizers have been added
     * [x] Replacement ('replace'): Replaces a detected sensitive value with a specified surrogate value. Leave the value empty to simply delete detected sensitive value.
     * [x] Hash ('hash'): Hash detected sensitive value with sha256.
+    * [x] Encryption: Encrypts the original sensitive data value using a Fernet (AES based).
 
 Currently supported file formats: `csv, parquet`
 
+## Encryption
+To use encryption as anonymize mode, a compatible encryption key needs to be created and assigned to `PII_SECRET` environment variables. Compatible key can be generated with
+
+`python -m pii_anonymizer.key`
+
+This will generate output similar to
+```
+Keep this encrypt key safe
+81AOjk7NV66O62QpnFsvCXH8BDB26KM9TIH7pBfZ6PQ=
+```
+To set this key as an environment variable run
+
+`export PII_SECRET=81AOjk7NV66O62QpnFsvCXH8BDB26KM9TIH7pBfZ6PQ=`
 ### TO-DO
 Following features  are part of the backlog with more features coming soon
  * Detectors:
     * [ ] NAME
     * [ ] ADDRESS
  * Anonymizers:
-    * [ ] Encryption :  Encrypts the original sensitive data value using a cryptographic key. Cloud DLP supports several types of tokenization, including transformations that can be reversed, or "re-identified."
     * [ ] Masking: Replaces a number of characters of a sensitive value with a specified surrogate character, such as a hash (#) or asterisk (*).
     * [ ] Bucketing: "Generalizes" a sensitive value by replacing it with a range of values. (For example, replacing a specific age with an age range,
     or temperatures with ranges corresponding to "Hot," "Medium," and "Cold.")
@@ -60,7 +73,7 @@ An example for the config JSON is located at `<PROJECT_ROOT>/pii-anonymizer.json
     "exclude": ['Exception']
   },
   "anonymize": {
-    "mode": <replace|hash>,
+    "mode": <replace|hash|encrypt>,
     "value": "string to replace",
     "output_file_path" : <PATH TO YOUR CSV OUTPUT FOLDER>,
     "output_file_format": <csv|parquet>,

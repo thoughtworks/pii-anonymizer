@@ -113,6 +113,11 @@ class PIIDetector:
                         column,
                         Anonymizer.hash(column, "pii_list"),
                     )
+                case "encrypt":
+                    resultDf = resultDf.withColumn(
+                        column,
+                        Anonymizer.encrypt(column, "pii_list"),
+                    )
                 case _:
                     resultDf = resultDf.withColumn(
                         column,
