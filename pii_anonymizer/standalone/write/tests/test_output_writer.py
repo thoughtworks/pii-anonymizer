@@ -95,12 +95,18 @@ class TestOutputWriter(TestCase):
                 writer = OutputWriter(config=context)
                 self.assertEqual(writer.get_output_file_path(), expected)
 
+    @patch("os.path.exists")
+    @patch("os.makedirs")
     @patch("pandas.DataFrame.to_csv")
     @patch("pandas.DataFrame.to_parquet")
-    def test_writer_call_correct_methods_on_write(self, mock_to_parquet, mock_to_csv):
+    def test_writer_call_correct_methods_on_write(
+        self, mock_to_parquet, mock_to_csv, mock_makedirs, mock_path_exists
+    ):
         df = pd.read_csv("./test_data/test_data.csv")
         mock_to_csv.return_value = None
         mock_to_parquet.return_value = None
+        mock_path_exists.return_value = False
+        mock_makedirs.return_value = None
 
         output_format_list = ["csv", "parquet"]
         for output_format in output_format_list:
@@ -116,6 +122,9 @@ class TestOutputWriter(TestCase):
                     },
                 }
                 OutputWriter(config=context).write(df)
+
+                mock_makedirs.assert_called()
+
                 match output_format:
                     case "csv":
                         mock_to_csv.assert_called()
