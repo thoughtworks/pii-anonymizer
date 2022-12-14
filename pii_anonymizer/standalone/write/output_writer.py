@@ -1,4 +1,4 @@
-import pandas as pd
+import os
 from pandas import DataFrame
 
 from pii_anonymizer.common.constants import (
@@ -56,9 +56,14 @@ class OutputWriter:
         return f"{self.output_path}/{output_file_name}.{self.output_format}"
 
     def write(self, df: DataFrame):
+        isExist = os.path.exists(self.output_path)
+        if not isExist:
+            os.makedirs(self.output_path)
+
+        path = self.get_output_file_path()
         match self.output_format:
             case "csv":
-                df.to_csv(self.get_output_file_path(), index=False)
+                df.to_csv(path, index=False)
             case "parquet":
-                df.to_parquet(self.get_output_file_path(), index=False)
+                df.to_parquet(path, index=False)
         print("Anonymized output has been successfully created!")

@@ -16,5 +16,6 @@ scratchpad.py
 *.egg-info
 
 test_data/generated.csv
+e2e/output
 # Mac
 .DS_Store

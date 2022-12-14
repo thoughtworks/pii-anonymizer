@@ -1,15 +1,16 @@
 {
   "acquire": {
-    "file_path": "./test_data/generated.csv",
+    "file_path": "./test_data/multiple_csv",
     "delimiter": ","
   },
   "analyze": {
     "exclude": ["Exception"]
   },
   "anonymize": {
-    "mode": "encrypt",
-    "output_file_path": "./output",
-    "output_file_name": "anonymized_output",
+    "mode": "replace",
+    "value": "[Redacted]",
+    "output_file_path": "./e2e/output",
+    "output_file_name": "standalone",
     "output_file_format": "csv"
   },
   "report": {

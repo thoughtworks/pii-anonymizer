@@ -30,6 +30,10 @@ build:
 test:
 	poetry run sh bin/run_tests.sh
 
+.PHONY: e2e
+e2e:
+	poetry run sh e2e/test-run.sh
+
 .PHONY: requirements
 requirements:
 	poetry export -f requirements.txt --output requirements.txt --dev

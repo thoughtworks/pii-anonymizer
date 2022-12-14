@@ -22,3 +22,5 @@ jobs:
       - run: poetry install
       - name: Unit Test
         run: make test
+      - name: E2E Test
+        run: make e2e
