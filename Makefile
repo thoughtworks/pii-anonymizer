@@ -8,7 +8,7 @@ install:
 
 .PHONY: data-gen
 data-gen:
-	poetry run python test_data/test_data_gen.py
+	poetry run python scripts/test_data_gen.py
 
 .PHONY: run
 run:
@@ -28,7 +28,7 @@ build:
 
 .PHONY: test
 test:
-	poetry run sh bin/run_tests.sh
+	poetry run sh scripts/run_tests.sh
 
 .PHONY: e2e
 e2e:
