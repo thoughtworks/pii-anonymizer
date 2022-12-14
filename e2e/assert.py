@@ -1,4 +1,5 @@
 import pandas as pd
+import dask.dataframe as dd
 
 
 def standalone_should_match_snapshot():
@@ -9,7 +10,7 @@ def standalone_should_match_snapshot():
 
 def spark_should_match_snapshot():
     expect = pd.read_csv("./e2e/expected.csv")
-    actual = pd.read_csv("./e2e/output/spark.csv")
+    actual = dd.read_csv("./e2e/output/spark/*.csv").compute()
     pd.testing.assert_frame_equal(expect, actual)
 
 
