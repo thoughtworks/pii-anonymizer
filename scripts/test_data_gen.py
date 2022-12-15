@@ -1,23 +1,27 @@
-import csv
 from faker import Faker
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import udf
+import math
 
 field_names = ["id", "name", "address", "phone_number", "email", "credit_card"]
 fake = Faker()
 
-data = []
-for i in range(1000):
-    data.append(
-        {
-            "id": i + 1,
-            "name": fake.name(),
-            "address": fake.address().replace("\n", " ").replace("\r", " "),
-            "phone_number": fake.phone_number(),
-            "email": fake.ascii_email(),
-            "credit_card": fake.credit_card_number(),
-        }
-    )
+KB_to_generate = 1000 * 500
+num_records = math.ceil(KB_to_generate * 7.9)
 
-with open("test_data/generated.csv", "w") as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=field_names)
-    writer.writeheader()
-    writer.writerows(data)
+spark = SparkSession.builder.master("local[*]").appName("PIIDetector").getOrCreate()
+
+
+def address():
+    return fake.address().replace("\n", " ").replace("\r", " ")
+
+
+df = (
+    spark.range(num_records)
+    .withColumn("name", udf(fake.name)())
+    .withColumn("address", udf(address)())
+    .withColumn("email", udf(fake.phone_number)())
+    .withColumn("phone_number", udf(fake.ascii_email)())
+    .withColumn("credit_card", udf(fake.credit_card_number)())
+)
+df.write.mode("overwrite").option("header", "true").csv("test_data/generated.csv")
