@@ -1,5 +1,5 @@
 class AnalyzerResult:
-    def __init__(self, text, type, start, end):
+    def __init__(self, text: str, type: str, start, end):
         self.text = text
         self.type = type
         self.start = start

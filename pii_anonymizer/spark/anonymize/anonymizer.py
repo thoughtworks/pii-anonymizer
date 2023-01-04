@@ -7,23 +7,34 @@ import os
 
 class Anonymizer:
     @udf(returnType=StringType())
-    def replace(text: str, replace_string: str, pii_list):
+    def replace(data, replace_string: str):
+        pii_list = data["pii"]
+        text = data["text"]
+
         for word in pii_list:
-            text = text.replace(word, replace_string)
+            text = text.replace(word.text, replace_string)
         return text
 
     @udf(returnType=StringType())
-    def hash(text: str, pii_list):
-        for word in pii_list:
+    def hash(data):
+        pii_list = data["pii"]
+        text = data["text"]
+
+        for pii in pii_list:
+            word = pii.text
             text = text.replace(word, sha256(word.encode("utf-8")).hexdigest())
         return text
 
     @udf(returnType=StringType())
-    def encrypt(text: str, secret: str, pii_list):
+    def encrypt(data: str):
         secret = os.getenv("PII_SECRET")
         f = Fernet(secret)
 
-        for word in pii_list:
+        pii_list = data["pii"]
+        text = data["text"]
+
+        for pii in pii_list:
+            word = pii.text
             encrypted_bytes = f.encrypt(word.encode())
             ascii_string = encrypted_bytes.decode("ascii")
             text = text.replace(word, ascii_string)

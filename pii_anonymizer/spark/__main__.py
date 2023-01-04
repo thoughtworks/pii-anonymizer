@@ -21,11 +21,10 @@ class Main:
         with open(config_file_path) as config_file:
             self.config = json.load(config_file)
 
-    # TODO : validate the config for the stages right here
     def run(self):
         validate(self.config)
         spark = (
-            SparkSession.builder.master("local").appName("PIIDetector").getOrCreate()
+            SparkSession.builder.master("local[*]").appName("PIIDetector").getOrCreate()
         )
         parsed_data_frame = InputParser(spark, config=self.config[ACQUIRE]).parse()
         pii_analysis_report, redacted_data_frame = PIIDetector(

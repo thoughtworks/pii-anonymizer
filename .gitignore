@@ -14,8 +14,11 @@ pyspark_config.json
 generate_fake_data.py
 scratchpad.py
 *.egg-info
-
+.metals
+.ipynb_checkpoints
+notebook.ipynb
 test_data/generated.csv
+test_data/generated.csv.zip
 e2e/output
 # Mac
 .DS_Store

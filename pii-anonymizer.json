@@ -1,13 +1,14 @@
 {
   "acquire": {
-    "file_path": "./test_data/generated.csv",
+    "file_path": "./test_data/multiple_csv/*.csv",
     "delimiter": ","
   },
   "analyze": {
     "exclude": ["Exception"]
   },
   "anonymize": {
-    "mode": "encrypt",
+    "mode": "replace",
+    "value": "[Redacted]",
     "output_file_path": "./output",
     "output_file_name": "anonymized_output",
     "output_file_format": "csv"

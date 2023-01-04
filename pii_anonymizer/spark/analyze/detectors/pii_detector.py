@@ -2,9 +2,10 @@ import importlib
 import pkgutil
 import inspect
 import sys
+from typing import List
 from pyspark.sql import DataFrame
 from pyspark.sql.types import StructField, StructType, ArrayType, StringType, LongType
-from pyspark.sql.functions import lit, array
+from pyspark.sql.functions import lit, array, col, udf
 from pii_anonymizer.common.analyze.filter_overlap_analysis import (
     filter_overlapped_analysis,
 )
@@ -43,21 +44,17 @@ class PIIDetector:
                     detectors.append(class_type())
         return detectors
 
-    def __detect_pii_row(self, row):
-        new_row = []
-        for element in row:
-            results = []
-            for detector in self.detectors:
-                results += detector.execute(element)
+    def __detect_pii_column(self, data):
+        results = []
+        for detector in self.detectors:
+            results += detector.execute(data)
 
-            filtered = filter_overlapped_analysis(results)
-            new_row.append(filtered)
+        filtered = filter_overlapped_analysis(results)
+        return {"text": data, "pii": filtered}
 
-        return new_row
-
-    def get_analyzer_results(self, input_data_frame: DataFrame):
-        columns = input_data_frame.columns
-
+    def get_analyzer_results(
+        self, input_data_frame: DataFrame, excluded_columns: List[str]
+    ):
         array_structtype = StructType(
             [
                 StructField("end", LongType(), False),
@@ -66,17 +63,46 @@ class PIIDetector:
                 StructField("type", StringType(), False),
             ]
         )
-        result_schema = []
-        for column in columns:
-            result_schema.append(
+
+        for column in input_data_frame.columns:
+            with_analysis_struct_type = StructType(
+                [
+                    StructField("text", StringType()),
+                    StructField(
+                        "pii", ArrayType(array_structtype, True), nullable=False
+                    ),
+                ]
+            )
+            if column in excluded_columns:
+                format_excluded = udf(
+                    lambda x: {"text": x, "pii": []}, with_analysis_struct_type
+                )
+                input_data_frame = input_data_frame.withColumn(
+                    column, format_excluded(col(column))
+                )
+            else:
+                detectPiiUDF = udf(
+                    lambda x: self.__detect_pii_column(x), with_analysis_struct_type
+                )
+                input_data_frame = input_data_frame.withColumn(
+                    column, detectPiiUDF(col(column))
+                )
+
+        report_data_frame = None
+        report_schema = []
+        for column in input_data_frame.columns:
+            report_schema.append(
                 StructField(column, ArrayType(array_structtype, True), nullable=False)
             )
+            if report_data_frame is None:
+                report_data_frame = input_data_frame
 
-        result = input_data_frame.rdd.map(lambda x: self.__detect_pii_row(x)).toDF(
-            schema=StructType(result_schema)
-        )
+            report_data_frame = report_data_frame.withColumn(
+                column, col(f"{column}.pii")
+            )
 
-        return result
+        report_data_frame = report_data_frame.rdd.toDF(schema=StructType(report_schema))
+        return report_data_frame, input_data_frame
 
     def _get_pii_list(self, row):
         get_analyzer_results_text = lambda x: x.text
@@ -87,53 +113,55 @@ class PIIDetector:
             new_row.extend(pii_sublist)
         return new_row
 
-    def get_redacted_text(self, input_data_frame: DataFrame, report: DataFrame):
+    def get_redacted_text(self, input_data_frame: DataFrame):
         excluded_columns = self.config[ANALYZE].get("exclude", [])
-        pii_list = report.rdd.flatMap(lambda row: self._get_pii_list(row)).collect()
+
         columns = input_data_frame.columns
 
         mode = self.config[ANONYMIZE].get("mode")
         value = self.config[ANONYMIZE].get("value", "")
 
-        resultDf = input_data_frame.withColumn(
-            "pii_list", array(*map(lit, pii_list))
-        ).withColumn("replace_string", lit(value))
+        resultDf = input_data_frame.withColumn("replace_string", lit(value))
+
+        format_excluded = udf(lambda x: x.get("text"), StringType())
 
         for column in columns:
             if column in excluded_columns:
+                resultDf = resultDf.withColumn(
+                    column,
+                    format_excluded(column),
+                )
                 continue
             match mode:
                 case "replace":
                     resultDf = resultDf.withColumn(
                         column,
-                        Anonymizer.replace(column, "replace_string", "pii_list"),
+                        Anonymizer.replace(column, "replace_string"),
                     )
                 case "hash":
                     resultDf = resultDf.withColumn(
                         column,
-                        Anonymizer.hash(column, "pii_list"),
+                        Anonymizer.hash(column),
                     )
                 case "encrypt":
                     resultDf = resultDf.withColumn(
                         column,
-                        Anonymizer.encrypt(column, "pii_list"),
+                        Anonymizer.encrypt(column),
                     )
                 case _:
                     resultDf = resultDf.withColumn(
                         column,
-                        Anonymizer.replace(column, "replace_string", "pii_list"),
+                        Anonymizer.replace(column, "replace_string"),
                     )
 
-        resultDf = resultDf.drop("replace_string", "pii_list")
+        resultDf = resultDf.drop("replace_string")
         return resultDf
 
     def analyze_data_frame(self, input_data_frame: DataFrame):
         excluded_columns = self.config[ANALYZE].get("exclude", [])
-        selected_columns = [
-            col for col in input_data_frame.columns if col not in excluded_columns
-        ]
-        excluded_data_frame = input_data_frame.select(selected_columns)
-        report = self.get_analyzer_results(excluded_data_frame)
-        redacted = self.get_redacted_text(input_data_frame, report)
+        report, with_analysis_data_frame = self.get_analyzer_results(
+            input_data_frame, excluded_columns
+        )
+        redacted = self.get_redacted_text(with_analysis_data_frame)
 
         return report, redacted
