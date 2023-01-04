@@ -10,8 +10,8 @@ def standalone_should_match_snapshot():
 
 
 def spark_should_match_snapshot():
-    expect = pd.read_csv("./e2e/expected.csv")
-    actual = dd.read_csv("./e2e/output/spark/*.csv").compute()
+    expect = pd.read_csv("./e2e/expected.csv").reset_index(drop=True)
+    actual = dd.read_csv("./e2e/output/spark/*.csv").compute().reset_index(drop=True)
     pd.testing.assert_frame_equal(expect, actual)
     print("E2E - Spark test passed")
 
